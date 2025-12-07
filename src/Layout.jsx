@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -7,6 +6,7 @@ import {
   LayoutDashboard,
   Search,
   FileText,
+  Send,
   Sparkles,
   Package,
   Building2,
@@ -15,7 +15,8 @@ import {
   Menu,
   Zap,
   Settings,
-  Users // Added Users icon
+  Users,
+  CreditCard
 } from "lucide-react";
 import {
   Sidebar,
@@ -78,9 +79,15 @@ const navigationItems = [
     tierAccess: ["Enterprise"]
   },
   {
-    title: "Electrician Directory", // New item added
+    title: "Electrician Directory",
     url: createPageUrl("ElectricianDirectory"),
     icon: Users,
+    tierAccess: "all"
+  },
+  {
+    title: "Upgrade Plan",
+    url: createPageUrl("PaymentPortal"),
+    icon: CreditCard,
     tierAccess: "all"
   },
   {
@@ -215,7 +222,7 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-xs text-orange-100 mb-3 leading-relaxed">
                     Unlock AI tools, unlimited projects, and premium features
                   </p>
-                  <Link to={createPageUrl("Pricing")}>
+                  <Link to={createPageUrl("PaymentPortal")}>
                     <Button className="w-full bg-white text-orange-600 hover:bg-orange-50 shadow-md text-sm font-bold border-2 border-white">
                       View Plans
                     </Button>
