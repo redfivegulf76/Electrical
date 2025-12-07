@@ -9,6 +9,7 @@ import Pricing from './pages/Pricing';
 import ProductManagement from './pages/ProductManagement';
 import ProfileSettings from './pages/ProfileSettings';
 import ElectricianDirectory from './pages/ElectricianDirectory';
+import PaymentPortal from './pages/PaymentPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "ProductManagement": ProductManagement,
     "ProfileSettings": ProfileSettings,
     "ElectricianDirectory": ElectricianDirectory,
+    "PaymentPortal": PaymentPortal,
 }
 
 export const pagesConfig = {
