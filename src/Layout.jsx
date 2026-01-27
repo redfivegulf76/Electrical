@@ -15,7 +15,6 @@ import {
   Menu,
   Zap,
   Settings,
-  Users,
   CreditCard
 } from "lucide-react";
 import {
@@ -77,12 +76,6 @@ const navigationItems = [
     url: createPageUrl("SupplierDirectory"),
     icon: Building2,
     tierAccess: ["Enterprise"]
-  },
-  {
-    title: "Electrician Directory",
-    url: createPageUrl("ElectricianDirectory"),
-    icon: Users,
-    tierAccess: "all"
   },
   {
     title: "Upgrade Plan",
