@@ -14,14 +14,21 @@ export default function AIEstimator() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [estimate, setEstimate] = useState(null);
+  const [placeholderSKUs, setPlaceholderSKUs] = useState([]);
 
   useEffect(() => {
     loadUser();
+    loadPlaceholderSKUs();
   }, []);
 
   const loadUser = async () => {
-    const userData = await User.me();
+    const userData = await base44.auth.me();
     setUser(userData);
+  };
+
+  const loadPlaceholderSKUs = async () => {
+    const skus = await base44.entities.PlaceholderSKU.filter({ job_type: "200A residential panel change" }, null, 200);
+    setPlaceholderSKUs(skus);
   };
 
   const hasAccess = user?.subscription_tier === "Pro" || user?.subscription_tier === "Enterprise";
