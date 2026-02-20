@@ -36,44 +36,54 @@ export default function AIEstimator() {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const result = await InvokeLLM({
-        prompt: `You are an expert electrical estimator. Based on this project description: "${description}"
-        
-        Generate a detailed electrical estimate including:
-        1. A list of materials needed with quantities and estimated prices
-        2. Labor hours estimate
-        3. Total project cost estimate
-        
-        Be realistic and comprehensive.`,
+      // Build the SKU list for the prompt
+      const skuList = placeholderSKUs.map(sku => 
+        `${sku.SKU_ID}: ${sku.Product_Name} (${sku.Category}, ${sku.Amperage_Voltage || 'N/A'}, Unit: ${sku.unit || 'each'})`
+      ).join('\n');
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are an expert electrical estimator for Border States Electrical contractors. 
+
+Based on this project description: "${description}"
+
+IMPORTANT CONSTRAINTS:
+1. You MUST ONLY use products from the following SKU list. DO NOT suggest any products not in this list.
+2. DO NOT hallucinate or invent any product names, SKUs, or specifications.
+3. Select appropriate products and quantities based on standard electrical practices for the described job.
+
+AVAILABLE SKU LIST:
+${skuList}
+
+Generate a detailed electrical estimate with materials from the SKU list above.`,
+        add_context_from_internet: false,
         response_json_schema: {
           type: "object",
           properties: {
             project_summary: { type: "string" },
-            materials: {
+            estimate_items: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  name: { type: "string" },
-                  quantity: { type: "number" },
-                  unit: { type: "string" },
-                  unit_price: { type: "number" },
-                  total: { type: "number" }
-                }
+                  SKU_ID: { type: "string" },
+                  Product_Name: { type: "string" },
+                  Category: { type: "string" },
+                  Quantity: { type: "number" },
+                  Reason_Notes: { type: "string" },
+                  Confidence_Score: { type: "number" }
+                },
+                required: ["SKU_ID", "Product_Name", "Category", "Quantity", "Reason_Notes"]
               }
-            },
-            labor_hours: { type: "number" },
-            labor_rate: { type: "number" },
-            materials_total: { type: "number" },
-            labor_total: { type: "number" },
-            total_estimate: { type: "number" }
-          }
+            }
+          },
+          required: ["project_summary", "estimate_items"]
         }
       });
       
       setEstimate(result);
     } catch (error) {
       console.error("Error generating estimate:", error);
+      alert("Failed to generate estimate. Please try again.");
     }
     setLoading(false);
   };
