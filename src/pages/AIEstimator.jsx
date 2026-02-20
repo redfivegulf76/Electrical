@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { QuoteList } from "@/entities/QuoteList";
-import { QuoteItem } from "@/entities/QuoteItem";
-import { InvokeLLM } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Wand2, FileText, DollarSign } from "lucide-react";
+import { Sparkles, Wand2, FileText, DollarSign, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import UpgradePrompt from "../components/shared/UpgradePrompt";
 
