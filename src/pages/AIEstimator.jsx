@@ -91,21 +91,21 @@ Generate a detailed electrical estimate with materials from the SKU list above.`
   const handleSaveToQuoteList = async () => {
     if (!estimate) return;
     
-    const newList = await QuoteList.create({
+    const newList = await base44.entities.QuoteList.create({
       name: `AI Estimate - ${new Date().toLocaleDateString()}`,
       notes: estimate.project_summary,
       status: "draft"
     });
 
-    const items = estimate.materials.map(item => ({
+    const items = estimate.estimate_items.map(item => ({
       quote_list_id: newList.id,
-      product_name: item.name,
-      quantity: item.quantity,
-      unit: item.unit,
-      unit_price: item.unit_price
+      product_name: item.Product_Name,
+      quantity: item.Quantity,
+      unit: "each",
+      notes: `SKU: ${item.SKU_ID} - ${item.Reason_Notes}`
     }));
 
-    await QuoteItem.bulkCreate(items);
+    await base44.entities.QuoteItem.bulkCreate(items);
     
     alert("Estimate saved to Quote Lists!");
   };
