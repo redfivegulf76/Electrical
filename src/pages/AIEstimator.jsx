@@ -182,6 +182,15 @@ Generate a detailed electrical estimate with materials from the SKU list above.`
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
+            {/* Disclaimer */}
+            <Alert className="border-2 border-orange-400 bg-orange-50">
+              <AlertCircle className="h-5 w-5 text-orange-600" />
+              <AlertDescription className="text-orange-800 font-medium">
+                <strong>Important:</strong> Estimates are based on placeholder SKUs and for planning purposes only. 
+                Always verify quantities, specifications, and compliance before ordering or installation.
+              </AlertDescription>
+            </Alert>
+
             {/* Summary */}
             <Card>
               <CardHeader>
@@ -195,42 +204,54 @@ Generate a detailed electrical estimate with materials from the SKU list above.`
             {/* Materials */}
             <Card>
               <CardHeader>
-                <CardTitle>Materials List</CardTitle>
+                <CardTitle>Materials List (Border States SKUs)</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {estimate.materials?.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white">
-                      <div className="flex-1">
-                        <p className="font-semibold text-slate-900">{item.name}</p>
-                        <p className="text-sm text-slate-600">
-                          {item.quantity} {item.unit} × ${item.unit_price?.toFixed(2)}
-                        </p>
+                <div className="space-y-3">
+                  {estimate.estimate_items?.map((item, index) => (
+                    <div key={index} className="p-4 border-2 border-slate-200 rounded-lg bg-white hover:border-cyan-300 transition-colors">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="px-2 py-0.5 bg-slate-800 text-white text-xs font-mono rounded">
+                              {item.SKU_ID}
+                            </span>
+                            <span className="px-2 py-0.5 bg-cyan-100 text-cyan-800 text-xs font-semibold rounded">
+                              {item.Category}
+                            </span>
+                          </div>
+                          <p className="font-bold text-slate-900 text-lg">{item.Product_Name}</p>
+                          <p className="text-sm text-slate-600 mt-1">
+                            <strong>Quantity:</strong> {item.Quantity}
+                          </p>
+                          <p className="text-sm text-slate-600 mt-1">
+                            <strong>Reason:</strong> {item.Reason_Notes}
+                          </p>
+                          {item.Confidence_Score && (
+                            <p className="text-xs text-slate-500 mt-1">
+                              Confidence: {(item.Confidence_Score * 100).toFixed(0)}%
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <span className="font-bold text-slate-900">${item.total?.toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Totals */}
-            <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700">Materials Total:</span>
-                  <span className="text-xl font-bold text-slate-900">${estimate.materials_total?.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700">Labor ({estimate.labor_hours} hrs @ ${estimate.labor_rate}/hr):</span>
-                  <span className="text-xl font-bold text-slate-900">${estimate.labor_total?.toFixed(2)}</span>
-                </div>
-                <div className="pt-4 border-t-2 border-green-200 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-6 h-6 text-green-600" />
-                    <span className="text-lg font-semibold text-slate-900">Total Estimate:</span>
+            {/* Info Card */}
+            <Card className="border-2 border-cyan-200 bg-gradient-to-br from-cyan-50 to-white">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3">
+                  <FileText className="w-6 h-6 text-cyan-600 mt-1" />
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-1">Estimate Ready</p>
+                    <p className="text-sm text-slate-600">
+                      Total items: <strong>{estimate.estimate_items?.length || 0}</strong> | 
+                      This estimate is based on Border States placeholder SKUs for a 200A residential panel change.
+                    </p>
                   </div>
-                  <span className="text-3xl font-bold text-green-600">${estimate.total_estimate?.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
