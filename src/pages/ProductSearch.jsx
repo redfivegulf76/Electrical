@@ -1,13 +1,14 @@
-
 import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
 import { User } from "@/entities/User";
 import { Product } from "@/entities/Product";
+import { MaterialTemplate } from "@/entities/MaterialTemplate";
 import { InvokeLLM } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon } from "lucide-react";
+import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon, Wrench, Calculator } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 
@@ -50,6 +51,7 @@ export default function ProductSearch() {
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [searchSource, setSearchSource] = useState("catalog");
+  const [generatedMaterialList, setGeneratedMaterialList] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -77,6 +79,7 @@ export default function ProductSearch() {
     
     setAiLoading(true);
     setSearchSource("catalog");
+    setGeneratedMaterialList(null);
     
     try {
       const extractionResult = await InvokeLLM({
@@ -86,6 +89,14 @@ export default function ProductSearch() {
         - keywords: Important words to search for in product names, descriptions, or specifications
         - categories: Which product categories are most relevant? Choose from: wire_cable, conduit, boxes, switches_outlets, lighting, panels, breakers, tools, safety, other
         - manufacturers: Any specific manufacturers mentioned or implied?
+        - construction_units: Identify specific construction units (outlet, switch, light_fixture, circuit_run, panel) and their quantities if mentioned
+        - is_quantity_based: true if the user is asking for materials for a specific quantity of installations (e.g., "materials for 10 outlets")
+        - project_category: Identify if residential, commercial, or industrial project is implied
+        
+        Examples:
+        - "I need materials for 10 outlets" → is_quantity_based: true, construction_units: [{type: "outlet", quantity: 10}]
+        - "15 light switches for a house" → is_quantity_based: true, construction_units: [{type: "switch", quantity: 15}], project_category: "residential"
+        - "conduit fittings" → is_quantity_based: false, keywords: ["conduit", "fittings"]
         
         Be thorough but focused. If something isn't mentioned, leave it empty.`,
         response_json_schema: {
@@ -102,11 +113,70 @@ export default function ProductSearch() {
             manufacturers: {
               type: "array",
               items: { type: "string" }
+            },
+            construction_units: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  quantity: { type: "number" }
+                }
+              }
+            },
+            is_quantity_based: {
+              type: "boolean"
+            },
+            project_category: {
+              type: "string"
             }
           }
         }
       });
       
+      // Handle quantity-based queries
+      if (extractionResult.is_quantity_based && extractionResult.construction_units?.length > 0) {
+        const materialLists = await Promise.all(
+          extractionResult.construction_units.map(async (unit) => {
+            const templates = await base44.entities.MaterialTemplate.filter({
+              construction_unit_type: unit.type,
+              ...(extractionResult.project_category ? { category: extractionResult.project_category } : {})
+            });
+            
+            if (templates.length === 0) return null;
+            
+            const template = templates[0];
+            const expandedItems = template.items.map(item => ({
+              ...item,
+              total_quantity: item.quantity_multiplier * unit.quantity,
+              construction_unit: unit.type,
+              requested_quantity: unit.quantity
+            }));
+            
+            return {
+              construction_unit: unit.type,
+              quantity: unit.quantity,
+              template_name: template.name,
+              labor_hours: (template.labor_hours_per_unit || 0) * unit.quantity,
+              items: expandedItems
+            };
+          })
+        );
+        
+        const validMaterialLists = materialLists.filter(list => list !== null);
+        
+        if (validMaterialLists.length > 0) {
+          setGeneratedMaterialList(validMaterialLists);
+          setDisplayedProducts([]);
+          setSearchQuery("");
+          setCategory("all");
+          setSearchSource("material_list");
+          setAiLoading(false);
+          return;
+        }
+      }
+      
+      // Regular catalog search
       let catalogResults = allProducts.filter(product => {
         const keywordMatch = !extractionResult.keywords?.length || extractionResult.keywords.some(kw => {
           const keyword = kw.toLowerCase();
@@ -309,18 +379,87 @@ export default function ProductSearch() {
           </CardContent>
         </Card>
 
-        {/* Results */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900">
-              {filteredProducts.length} Product{filteredProducts.length !== 1 ? 's' : ''} Found
-            </h2>
-            {displayedProducts.length > 0 && (
-              <p className="text-sm text-slate-500">
-                Showing {filteredProducts.length} of {displayedProducts.length} total products
-              </p>
-            )}
+        {/* Material List Results */}
+        {generatedMaterialList && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calculator className="w-6 h-6 text-purple-600" />
+                <h2 className="text-2xl font-bold text-slate-900">
+                  Generated Material List
+                </h2>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setGeneratedMaterialList(null);
+                  setSearchSource("catalog");
+                }}
+              >
+                Back to Search
+              </Button>
+            </div>
+
+            {generatedMaterialList.map((list, listIdx) => (
+              <Card key={listIdx} className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-white">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl text-purple-900">
+                        {list.template_name}
+                      </CardTitle>
+                      <p className="text-sm text-slate-600 mt-1">
+                        Quantity: {list.quantity} {list.construction_unit}(s) • Estimated Labor: {list.labor_hours.toFixed(1)} hours
+                      </p>
+                    </div>
+                    <Badge className="bg-purple-600 text-white">
+                      <Wrench className="w-3 h-3 mr-1" />
+                      {list.items.length} Items
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {list.items.map((item, itemIdx) => (
+                      <div
+                        key={itemIdx}
+                        className="flex items-center justify-between p-4 bg-white border border-purple-200 rounded-lg hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex-1">
+                          <p className="font-semibold text-slate-900">{item.product_name}</p>
+                          <p className="text-sm text-slate-600">
+                            {item.quantity_multiplier} {item.unit} per {list.construction_unit} × {list.quantity} = {item.total_quantity} {item.unit}
+                          </p>
+                          {item.notes && (
+                            <p className="text-xs text-slate-500 mt-1">{item.notes}</p>
+                          )}
+                        </div>
+                        <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                          <Plus className="w-4 h-4 mr-1" />
+                          Add to Quote
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        )}
+
+        {/* Results */}
+        {!generatedMaterialList && (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-slate-900">
+                {filteredProducts.length} Product{filteredProducts.length !== 1 ? 's' : ''} Found
+              </h2>
+              {displayedProducts.length > 0 && (
+                <p className="text-sm text-slate-500">
+                  Showing {filteredProducts.length} of {displayedProducts.length} total products
+                </p>
+              )}
+            </div>
 
           {filteredProducts.length === 0 ? (
             <Card className="border-2 border-dashed border-slate-200 bg-slate-50/50">
@@ -410,7 +549,8 @@ export default function ProductSearch() {
               ))}
             </div>
           )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
