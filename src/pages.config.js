@@ -62,6 +62,9 @@ import SupplierDirectory from './pages/SupplierDirectory';
 import Templates from './pages/Templates';
 import ProjectInput from './pages/ProjectInput';
 import MaterialListViewer from './pages/MaterialListViewer';
+import DataExtractor from './pages/DataExtractor';
+import ExtractionDashboard from './pages/ExtractionDashboard';
+import ReviewExtractions from './pages/ReviewExtractions';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +84,9 @@ export const PAGES = {
     "Templates": Templates,
     "ProjectInput": ProjectInput,
     "MaterialListViewer": MaterialListViewer,
+    "DataExtractor": DataExtractor,
+    "ExtractionDashboard": ExtractionDashboard,
+    "ReviewExtractions": ReviewExtractions,
 }
 
 export const pagesConfig = {

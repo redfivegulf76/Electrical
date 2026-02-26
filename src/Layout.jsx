@@ -16,7 +16,9 @@ import {
   Zap,
   Settings,
   Users,
-  CreditCard
+  CreditCard,
+  Bot,
+  Database
 } from "lucide-react";
 import {
   Sidebar,
@@ -83,6 +85,18 @@ const navigationItems = [
     url: createPageUrl("ElectricianDirectory"),
     icon: Users,
     tierAccess: "all"
+  },
+  {
+    title: "AI Data Extractor",
+    url: createPageUrl("DataExtractor"),
+    icon: Bot,
+    tierAccess: ["Pro", "Enterprise"]
+  },
+  {
+    title: "Extraction Dashboard",
+    url: createPageUrl("ExtractionDashboard"),
+    icon: Database,
+    tierAccess: ["Pro", "Enterprise"]
   },
   {
     title: "Upgrade Plan",
