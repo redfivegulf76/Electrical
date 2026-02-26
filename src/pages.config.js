@@ -60,6 +60,8 @@ import ProfileSettings from './pages/ProfileSettings';
 import QuoteLists from './pages/QuoteLists';
 import SupplierDirectory from './pages/SupplierDirectory';
 import Templates from './pages/Templates';
+import ProjectInput from './pages/ProjectInput';
+import MaterialListViewer from './pages/MaterialListViewer';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +79,8 @@ export const PAGES = {
     "QuoteLists": QuoteLists,
     "SupplierDirectory": SupplierDirectory,
     "Templates": Templates,
+    "ProjectInput": ProjectInput,
+    "MaterialListViewer": MaterialListViewer,
 }
 
 export const pagesConfig = {
