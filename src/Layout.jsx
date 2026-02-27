@@ -124,6 +124,8 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
+  const [onboardingRecord, setOnboardingRecord] = React.useState(null);
 
   React.useEffect(() => {
     loadUser();
@@ -131,8 +133,21 @@ export default function Layout({ children, currentPageName }) {
 
   const loadUser = async () => {
     try {
-      const userData = await User.me();
+      const userData = await base44.auth.me();
       setUser(userData);
+
+      // Check onboarding status
+      const records = await base44.entities.UserOnboardingStatus.filter({ user_id: userData.email });
+      if (records.length === 0) {
+        // First-time user
+        setShowOnboarding(true);
+      } else {
+        const record = records[0];
+        setOnboardingRecord(record);
+        if (!record.onboarding_completed) {
+          setShowOnboarding(true);
+        }
+      }
     } catch (error) {
       console.error("Error loading user:", error);
     } finally {
