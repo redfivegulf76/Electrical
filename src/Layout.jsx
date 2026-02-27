@@ -318,7 +318,6 @@ export default function Layout({ children, currentPageName }) {
         </main>
       </div>
 
-      {/* Onboarding Modal */}
       {showOnboarding && user && (
         <OnboardingModal
           user={user}
