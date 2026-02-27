@@ -326,6 +326,7 @@ export default function Layout({ children, currentPageName }) {
           onboardingRecord={onboardingRecord}
           onComplete={() => setShowOnboarding(false)}
         />
+      )}
         </main>
       </div>
     </SidebarProvider>
