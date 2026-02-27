@@ -115,9 +115,9 @@ const navigationItems = [
 ];
 
 const tierColors = {
-  Free: "bg-slate-700 text-slate-200 border-slate-600",
-  Pro: "bg-cyan-500 text-white border-cyan-400",
-  Enterprise: "bg-orange-500 text-white border-orange-400"
+  Free: "bg-slate-100 text-slate-600 border-slate-200",
+  Pro: "bg-blue-50 text-blue-700 border-blue-100",
+  Enterprise: "bg-violet-50 text-violet-700 border-violet-100"
 };
 
 export default function Layout({ children, currentPageName }) {
