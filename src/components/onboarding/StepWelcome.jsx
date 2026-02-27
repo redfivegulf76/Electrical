@@ -22,7 +22,7 @@ export default function StepWelcome({ onStart, onSkip }) {
         className="space-y-4 mb-10"
       >
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-          Welcome to <span className="text-cyan-600">PackOutAI</span>
+          Welcome to <span className="text-cyan-600">AIpartsFinder</span>
         </h1>
         <p className="text-lg text-slate-500 max-w-md mx-auto leading-relaxed">
           AI-powered estimating and electrical intelligence for modern contractors.
