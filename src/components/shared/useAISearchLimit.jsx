@@ -26,26 +26,37 @@ export function useAISearchLimit(user) {
 
   const loadUsage = async () => {
     const records = await base44.entities.UserOnboardingStatus.filter({ user_id: user.email });
-    if (records.length > 0) {
-      const record = records[0];
-      const weekStart = getStartOfWeek();
-      const lastReset = record.weekly_ai_searches_last_reset;
+    
+    let record;
+    if (records.length === 0) {
+      // Create a new record if one doesn't exist
+      record = await base44.entities.UserOnboardingStatus.create({
+        user_id: user.email,
+        onboarding_completed: false,
+        weekly_ai_searches_count: 0,
+        weekly_ai_searches_last_reset: getStartOfWeek()
+      });
+    } else {
+      record = records[0];
+    }
 
-      // If the week has changed, reset count
-      if (lastReset !== weekStart) {
-        const updated = await base44.entities.UserOnboardingStatus.update(record.id, {
-          weekly_ai_searches_count: 0,
-          weekly_ai_searches_last_reset: weekStart
-        });
-        setUsageRecord(updated);
-        setSearchesUsed(0);
-        setLimitReached(false);
-      } else {
-        setUsageRecord(record);
-        const count = record.weekly_ai_searches_count || 0;
-        setSearchesUsed(count);
-        setLimitReached(isFreeUser && count >= FREE_WEEKLY_LIMIT);
-      }
+    const weekStart = getStartOfWeek();
+    const lastReset = record.weekly_ai_searches_last_reset;
+
+    // If the week has changed, reset count
+    if (lastReset !== weekStart) {
+      const updated = await base44.entities.UserOnboardingStatus.update(record.id, {
+        weekly_ai_searches_count: 0,
+        weekly_ai_searches_last_reset: weekStart
+      });
+      setUsageRecord(updated);
+      setSearchesUsed(0);
+      setLimitReached(false);
+    } else {
+      setUsageRecord(record);
+      const count = record.weekly_ai_searches_count || 0;
+      setSearchesUsed(count);
+      setLimitReached(isFreeUser && count >= FREE_WEEKLY_LIMIT);
     }
   };
 
