@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import PullToRefresh from "../components/mobile/PullToRefresh";
 
 const statusColors = {
   draft: "bg-slate-100 text-slate-700 border-slate-200",

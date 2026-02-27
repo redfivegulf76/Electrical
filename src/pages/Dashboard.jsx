@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 
 import StatCard from "../components/shared/StatCard";
+import PullToRefresh from "../components/mobile/PullToRefresh";
 import TierBadge from "../components/shared/TierBadge";
 import OnboardingModal from "../components/onboarding/OnboardingModal";
 import { useOnboarding } from "../components/onboarding/useOnboarding";
