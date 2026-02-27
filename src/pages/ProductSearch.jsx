@@ -66,9 +66,8 @@ export default function ProductSearch() {
     setLoading(false);
   };
 
-  // All users (including Free) get AI search access, just with a weekly limit
   const isFreeUser = !user?.subscription_tier || user?.subscription_tier === "Free";
-  const { canSearch, searchesRemaining, incrementSearch } = useAISearchLimit(user);
+  const { canSearch, searchesRemaining, loaded: limitLoaded, incrementSearch } = useAISearchLimit(user);
 
   const handleAISearch = async () => {
     if (!canSearch) return;
