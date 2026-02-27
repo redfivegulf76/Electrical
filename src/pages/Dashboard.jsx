@@ -24,10 +24,10 @@ const tierLimits = {
 };
 
 const statusColors = {
-  planning: "bg-cyan-50 text-cyan-700 border-2 border-cyan-200",
-  in_progress: "bg-orange-50 text-orange-700 border-2 border-orange-200",
-  completed: "bg-green-50 text-green-700 border-2 border-green-200",
-  archived: "bg-slate-100 text-slate-700 border-2 border-slate-300"
+  planning: "bg-blue-50 text-blue-600 border border-blue-100",
+  in_progress: "bg-amber-50 text-amber-700 border border-amber-100",
+  completed: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+  archived: "bg-slate-100 text-slate-500 border border-slate-200"
 };
 
 export default function Dashboard() {
