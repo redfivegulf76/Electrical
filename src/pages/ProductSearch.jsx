@@ -311,6 +311,13 @@ export default function ProductSearch() {
           <CardContent>
             {hasAIAccess ? (
               <div className="space-y-4">
+                {isFreeUser && (
+                  <div className={`text-sm px-3 py-2 rounded-lg border ${!canSearch ? 'bg-red-50 border-red-200 text-red-700' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+                    {!canSearch
+                      ? "You've used all 20 AI searches for this week. Upgrade to Pro for unlimited searches."
+                      : `${searchesRemaining} of 20 free AI searches remaining this week`}
+                  </div>
+                )}
                 <Input
                   placeholder="Describe what you're looking for... e.g., 'explosion-proof lighting for chemical plant' or '200 amp panel for commercial building'"
                   value={aiQuery}
@@ -320,7 +327,7 @@ export default function ProductSearch() {
                 />
                 <Button
                   onClick={handleAISearch}
-                  disabled={!aiQuery || aiLoading}
+                  disabled={!aiQuery || aiLoading || (!canSearch && isFreeUser)}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                 >
                   {aiLoading ? (

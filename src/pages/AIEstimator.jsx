@@ -70,6 +70,7 @@ export default function AIEstimator() {
         }
       });
       
+      await incrementSearch();
       setEstimate(result);
     } catch (error) {
       console.error("Error generating estimate:", error);
