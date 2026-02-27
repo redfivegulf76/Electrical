@@ -7,12 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User as UserIcon, Upload, Save, Camera, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useOnboarding } from "../components/onboarding/useOnboarding";
-import OnboardingModal from "../components/onboarding/OnboardingModal";
+import OnboardingModal from "@/components/onboarding/OnboardingModal";
 
 export default function ProfileSettings() {
   const [user, setUser] = useState(null);
-  const { showOnboarding, onboardingRecord, completeOnboarding, replayTour } = useOnboarding(user);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -27,7 +25,9 @@ export default function ProfileSettings() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [newSpecialty, setNewSpecialty] = useState(""); // New state for adding specialties
+  const [newSpecialty, setNewSpecialty] = useState("");
+  const [showTour, setShowTour] = useState(false);
+  const [onboardingRecord, setOnboardingRecord] = useState(null); // New state for adding specialties
 
   useEffect(() => {
     loadUser();
@@ -111,25 +111,12 @@ export default function ProfileSettings() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-8">
-      {showOnboarding && (
-        <OnboardingModal onComplete={completeOnboarding} onboardingRecord={onboardingRecord} />
-      )}
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-              Profile Settings
-            </h1>
-            <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={replayTour}
-            className="border-2 border-cyan-300 text-cyan-700 hover:bg-cyan-50 font-bold"
-          >
-            <PlayCircle className="w-4 h-4 mr-2" />
-            Replay Tour
-          </Button>
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+            Profile Settings
+          </h1>
+          <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
