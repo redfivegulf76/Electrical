@@ -303,7 +303,7 @@ export default function ProductSearch() {
               />
               <Button
                 onClick={handleAISearch}
-                disabled={!aiQuery || aiLoading || !canSearch}
+                disabled={!aiQuery || aiLoading || (limitLoaded && !canSearch)}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               >
                 {aiLoading ? (
