@@ -206,6 +206,7 @@ export default function ProductSearch() {
         setDisplayedProducts(catalogResults);
         setSearchQuery("");
         setCategory("all");
+        await incrementSearch();
         setSearchSource("catalog");
       } else {
         const generationResult = await InvokeLLM({
@@ -251,6 +252,7 @@ export default function ProductSearch() {
           unit: "each"
         })) || [];
         
+        await incrementSearch();
         setDisplayedProducts([...catalogResults, ...aiProducts]);
         setSearchQuery("");
         setCategory("all");
