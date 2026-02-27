@@ -3,7 +3,18 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+// Inlined useIsMobile hook
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(false)
+  React.useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)")
+    const onChange = () => setIsMobile(window.innerWidth < 768)
+    mql.addEventListener("change", onChange)
+    setIsMobile(window.innerWidth < 768)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+  return isMobile
+}
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
