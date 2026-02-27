@@ -2,26 +2,26 @@ import React from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 export default function StatCard({ title, value, icon: Icon, color = "cyan", subtitle }) {
-  const colorClasses = {
-    cyan: "from-cyan-400 to-cyan-600 border-cyan-300",
-    green: "from-green-400 to-green-600 border-green-300",
-    orange: "from-orange-400 to-orange-600 border-orange-300",
-    purple: "from-purple-400 to-purple-600 border-purple-300"
+  const iconColors = {
+    cyan: "text-blue-500 bg-blue-50",
+    green: "text-emerald-500 bg-emerald-50",
+    orange: "text-amber-500 bg-amber-50",
+    purple: "text-violet-500 bg-violet-50"
   };
 
   return (
-    <Card className="border-2 border-slate-200 hover:shadow-lg transition-all duration-300 bg-white">
-      <CardHeader className="pb-3">
+    <Card className="border border-slate-200 hover:shadow-sm transition-all duration-200 bg-white">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{title}</p>
-          <div className={`p-2.5 rounded-lg bg-gradient-to-br ${colorClasses[color]} shadow-lg border-2`}>
-            <Icon className="w-5 h-5 text-white" />
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{title}</p>
+          <div className={`p-2 rounded-lg ${iconColors[color]}`}>
+            <Icon className="w-4 h-4" />
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-bold text-[#263238]">{value}</p>
-        {subtitle && <p className="text-sm text-slate-500 mt-1 font-semibold">{subtitle}</p>}
+        <p className="text-2xl font-semibold text-slate-900">{value}</p>
+        {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
       </CardContent>
     </Card>
   );
