@@ -103,23 +103,20 @@ export default function Dashboard() {
               <img
                 src={user.profile_picture_url}
                 alt={user.full_name}
-                className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
               />
             )}
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-[#263238] tracking-tight">
+              <h1 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight">
                 Welcome back, {user?.full_name?.split(' ')[0] || 'there'}
               </h1>
-              <p className="text-slate-600 mt-2 font-medium">Manage your electrical projects and estimates</p>
-              {user?.bio && (
-                <p className="text-sm text-slate-500 mt-1 line-clamp-1">{user.bio}</p>
-              )}
+              <p className="text-slate-500 mt-1 text-sm">Manage your electrical projects and estimates</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <TierBadge tier={user?.subscription_tier} showIcon />
             <Link to={createPageUrl("ProductSearch")}>
-              <Button className="bg-cyan-500 hover:bg-cyan-600 text-white shadow-lg border-2 border-cyan-400 font-bold">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                 <Plus className="w-4 h-4 mr-2" />
                 New Quote
               </Button>
