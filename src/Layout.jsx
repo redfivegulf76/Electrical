@@ -179,15 +179,12 @@ export default function Layout({ children, currentPageName }) {
     <SidebarProvider>
       <style>{`
         :root {
-          --sidebar-width: 280px;
-          --primary-dark: #263238;
-          --primary-cyan: #00BCD4;
-          --primary-orange: #FF7043;
-          --success-green: #8BC34A;
+          --sidebar-width: 260px;
         }
+        body { font-family: 'Inter', system-ui, sans-serif; }
       `}</style>
       <div className="min-h-screen flex w-full bg-slate-50">
-        <Sidebar className="border-r-2 border-slate-200 bg-[#263238]">
+        <Sidebar className="border-r border-slate-200 bg-white">
           <SidebarHeader className="border-b-2 border-slate-700 p-6">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center shadow-lg border-2 border-cyan-300">
