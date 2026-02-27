@@ -27,7 +27,9 @@ export default function ProfileSettings() {
   const [saved, setSaved] = useState(false);
   const [newSpecialty, setNewSpecialty] = useState("");
   const [showTour, setShowTour] = useState(false);
-  const [onboardingRecord, setOnboardingRecord] = useState(null); // New state for adding specialties
+  const [onboardingRecord, setOnboardingRecord] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   useEffect(() => {
     loadUser();
