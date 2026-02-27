@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { User } from "@/entities/User";
-import { Product } from "@/entities/Product";
-import { MaterialTemplate } from "@/entities/MaterialTemplate";
-import { InvokeLLM } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon, Wrench, Calculator } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
-
-import UpgradePrompt from "../components/shared/UpgradePrompt";
 import { useAISearchLimit } from "../components/shared/useAISearchLimit";
 
 const categories = [
@@ -61,10 +55,9 @@ export default function ProductSearch() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const userData = await User.me();
+      const userData = await base44.auth.me();
       setUser(userData);
-      
-      const productsData = await Product.list("-created_date");
+      const productsData = await base44.entities.Product.list("-created_date");
       setAllProducts(productsData);
       setDisplayedProducts(productsData);
     } catch (error) {
@@ -73,19 +66,19 @@ export default function ProductSearch() {
     setLoading(false);
   };
 
-  const hasAIAccess = user?.subscription_tier === "Pro" || user?.subscription_tier === "Enterprise" || user?.subscription_tier === "Free" || !user?.subscription_tier;
+  // All users (including Free) get AI search access, just with a weekly limit
   const isFreeUser = !user?.subscription_tier || user?.subscription_tier === "Free";
   const { canSearch, searchesRemaining, incrementSearch } = useAISearchLimit(user);
 
   const handleAISearch = async () => {
-    if (!canSearch && isFreeUser) return;
-    
+    if (!canSearch) return;
+
     setAiLoading(true);
     setSearchSource("catalog");
     setGeneratedMaterialList(null);
-    
+
     try {
-      const extractionResult = await InvokeLLM({
+      const extractionResult = await base44.integrations.Core.InvokeLLM({
         prompt: `You are an electrical supply expert. Analyze this search query and extract relevant search parameters: "${aiQuery}"
         
         Extract:
@@ -105,18 +98,9 @@ export default function ProductSearch() {
         response_json_schema: {
           type: "object",
           properties: {
-            keywords: {
-              type: "array",
-              items: { type: "string" }
-            },
-            categories: {
-              type: "array",
-              items: { type: "string" }
-            },
-            manufacturers: {
-              type: "array",
-              items: { type: "string" }
-            },
+            keywords: { type: "array", items: { type: "string" } },
+            categories: { type: "array", items: { type: "string" } },
+            manufacturers: { type: "array", items: { type: "string" } },
             construction_units: {
               type: "array",
               items: {
@@ -127,16 +111,12 @@ export default function ProductSearch() {
                 }
               }
             },
-            is_quantity_based: {
-              type: "boolean"
-            },
-            project_category: {
-              type: "string"
-            }
+            is_quantity_based: { type: "boolean" },
+            project_category: { type: "string" }
           }
         }
       });
-      
+
       // Handle quantity-based queries
       if (extractionResult.is_quantity_based && extractionResult.construction_units?.length > 0) {
         const materialLists = await Promise.all(
@@ -145,9 +125,9 @@ export default function ProductSearch() {
               construction_unit_type: unit.type,
               ...(extractionResult.project_category ? { category: extractionResult.project_category } : {})
             });
-            
+
             if (templates.length === 0) return null;
-            
+
             const template = templates[0];
             const expandedItems = template.items.map(item => ({
               ...item,
@@ -155,7 +135,7 @@ export default function ProductSearch() {
               construction_unit: unit.type,
               requested_quantity: unit.quantity
             }));
-            
+
             return {
               construction_unit: unit.type,
               quantity: unit.quantity,
@@ -165,20 +145,21 @@ export default function ProductSearch() {
             };
           })
         );
-        
+
         const validMaterialLists = materialLists.filter(list => list !== null);
-        
+
         if (validMaterialLists.length > 0) {
           setGeneratedMaterialList(validMaterialLists);
           setDisplayedProducts([]);
           setSearchQuery("");
           setCategory("all");
           setSearchSource("material_list");
+          await incrementSearch();
           setAiLoading(false);
           return;
         }
       }
-      
+
       // Regular catalog search
       let catalogResults = allProducts.filter(product => {
         const keywordMatch = !extractionResult.keywords?.length || extractionResult.keywords.some(kw => {
@@ -190,18 +171,18 @@ export default function ProductSearch() {
             product.manufacturer?.toLowerCase().includes(keyword)
           );
         });
-        
-        const categoryMatch = !extractionResult.categories?.length || 
+
+        const categoryMatch = !extractionResult.categories?.length ||
           extractionResult.categories.includes(product.category);
-        
+
         const manufacturerMatch = !extractionResult.manufacturers?.length ||
-          extractionResult.manufacturers.some(mfr => 
+          extractionResult.manufacturers.some(mfr =>
             product.manufacturer?.toLowerCase().includes(mfr.toLowerCase())
           );
-        
+
         return keywordMatch && categoryMatch && manufacturerMatch;
       });
-      
+
       if (catalogResults.length >= 3) {
         setDisplayedProducts(catalogResults);
         setSearchQuery("");
@@ -209,7 +190,7 @@ export default function ProductSearch() {
         await incrementSearch();
         setSearchSource("catalog");
       } else {
-        const generationResult = await InvokeLLM({
+        const generationResult = await base44.integrations.Core.InvokeLLM({
           prompt: `You are an electrical supply expert. The user is searching for: "${aiQuery}". 
           
           We found ${catalogResults.length} products in the catalog, but need more suggestions.
@@ -237,21 +218,20 @@ export default function ProductSearch() {
                     manufacturer: { type: "string" },
                     description: { type: "string" },
                     specifications: { type: "string" },
-                    model_number: { type: "string" },
-                    image_url: { type: "string" } // Added image_url to AI suggestion schema
+                    model_number: { type: "string" }
                   }
                 }
               }
             }
           }
         });
-        
+
         const aiProducts = generationResult.products?.map(p => ({
           ...p,
           isAISuggestion: true,
           unit: "each"
         })) || [];
-        
+
         await incrementSearch();
         setDisplayedProducts([...catalogResults, ...aiProducts]);
         setSearchQuery("");
@@ -265,7 +245,7 @@ export default function ProductSearch() {
   };
 
   const filteredProducts = displayedProducts.filter(p => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.manufacturer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -295,69 +275,59 @@ export default function ProductSearch() {
           <p className="text-slate-600 mt-2">Find electrical materials and supplies</p>
         </div>
 
-        {/* AI Search Section */}
-        <Card className={`border-2 ${hasAIAccess ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-white' : 'border-slate-200'}`}>
+        {/* AI Search Section - available to all users */}
+        <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Sparkles className={hasAIAccess ? "w-6 h-6 text-blue-600" : "w-6 h-6 text-slate-400"} />
-              <CardTitle className={hasAIAccess ? "text-blue-900" : "text-slate-900"}>
-                AI-Powered Search
-              </CardTitle>
-              {hasAIAccess && (
+              <Sparkles className="w-6 h-6 text-blue-600" />
+              <CardTitle className="text-blue-900">AI-Powered Search</CardTitle>
+              {!isFreeUser && (
                 <Badge className="bg-blue-600 text-white">Pro Feature</Badge>
               )}
             </div>
           </CardHeader>
           <CardContent>
-            {hasAIAccess ? (
-              <div className="space-y-4">
-                {isFreeUser && (
-                  <div className={`text-sm px-3 py-2 rounded-lg border ${!canSearch ? 'bg-red-50 border-red-200 text-red-700' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
-                    {!canSearch
-                      ? "You've used all 20 AI searches for this week. Upgrade to Pro for unlimited searches."
-                      : `${searchesRemaining} of 20 free AI searches remaining this week`}
-                  </div>
-                )}
-                <Input
-                  placeholder="Describe what you're looking for... e.g., 'explosion-proof lighting for chemical plant' or '200 amp panel for commercial building'"
-                  value={aiQuery}
-                  onChange={(e) => setAiQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAISearch()}
-                  className="text-lg"
-                />
-                <Button
-                  onClick={handleAISearch}
-                  disabled={!aiQuery || aiLoading || (!canSearch && isFreeUser)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                >
-                  {aiLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      AI is searching your catalog...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Search with AI
-                    </>
-                  )}
-                </Button>
-                {searchSource !== "catalog" && displayedProducts.length > 0 && (
-                  <div className="text-sm text-slate-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <Database className="w-4 h-4 inline mr-2" />
-                    {searchSource === "mixed" 
-                      ? "Showing results from your catalog and AI suggestions" 
-                      : "Showing AI-generated suggestions (not in your catalog)"}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <UpgradePrompt
-                feature="AI-Powered Search"
-                requiredTier="Pro"
-                message="Upgrade to Pro to use AI to find exactly what you need with natural language"
+            <div className="space-y-4">
+              {isFreeUser && (
+                <div className={`text-sm px-3 py-2 rounded-lg border ${!canSearch ? 'bg-red-50 border-red-200 text-red-700' : 'bg-blue-50 border-blue-200 text-blue-700'}`}>
+                  {!canSearch
+                    ? "You've used all 20 AI searches for this week. Upgrade to Pro for unlimited searches."
+                    : `${searchesRemaining} of 20 free AI searches remaining this week`}
+                </div>
+              )}
+              <Input
+                placeholder="Describe what you're looking for... e.g., 'explosion-proof lighting for chemical plant' or '200 amp panel for commercial building'"
+                value={aiQuery}
+                onChange={(e) => setAiQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAISearch()}
+                className="text-lg"
               />
-            )}
+              <Button
+                onClick={handleAISearch}
+                disabled={!aiQuery || aiLoading || !canSearch}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+              >
+                {aiLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    AI is searching your catalog...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Search with AI
+                  </>
+                )}
+              </Button>
+              {searchSource !== "catalog" && displayedProducts.length > 0 && (
+                <div className="text-sm text-slate-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <Database className="w-4 h-4 inline mr-2" />
+                  {searchSource === "mixed"
+                    ? "Showing results from your catalog and AI suggestions"
+                    : "Showing AI-generated suggestions (not in your catalog)"}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -397,9 +367,7 @@ export default function ProductSearch() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calculator className="w-6 h-6 text-purple-600" />
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Generated Material List
-                </h2>
+                <h2 className="text-2xl font-bold text-slate-900">Generated Material List</h2>
               </div>
               <Button
                 variant="outline"
@@ -417,9 +385,7 @@ export default function ProductSearch() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl text-purple-900">
-                        {list.template_name}
-                      </CardTitle>
+                      <CardTitle className="text-xl text-purple-900">{list.template_name}</CardTitle>
                       <p className="text-sm text-slate-600 mt-1">
                         Quantity: {list.quantity} {list.construction_unit}(s) • Estimated Labor: {list.labor_hours.toFixed(1)} hours
                       </p>
@@ -442,9 +408,7 @@ export default function ProductSearch() {
                           <p className="text-sm text-slate-600">
                             {item.quantity_multiplier} {item.unit} per {list.construction_unit} × {list.quantity} = {item.total_quantity} {item.unit}
                           </p>
-                          {item.notes && (
-                            <p className="text-xs text-slate-500 mt-1">{item.notes}</p>
-                          )}
+                          {item.notes && <p className="text-xs text-slate-500 mt-1">{item.notes}</p>}
                         </div>
                         <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
                           <Plus className="w-4 h-4 mr-1" />
@@ -473,94 +437,86 @@ export default function ProductSearch() {
               )}
             </div>
 
-          {filteredProducts.length === 0 ? (
-            <Card className="border-2 border-dashed border-slate-200 bg-slate-50/50">
-              <CardContent className="p-12 text-center">
-                <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
-                  {allProducts.length === 0 ? "No products in database" : "No products match your search"}
-                </h3>
-                <p className="text-slate-600 mb-4">
-                  {allProducts.length === 0 
-                    ? "Start by using AI search to find products, or add products manually via Product Management"
-                    : "Try adjusting your search terms or category filter"}
-                </p>
-                {hasAIAccess && allProducts.length === 0 && (
-                  <p className="text-sm text-blue-600">
-                    💡 Tip: Use the AI-Powered Search above to find products in your catalog or get AI suggestions
+            {filteredProducts.length === 0 ? (
+              <Card className="border-2 border-dashed border-slate-200 bg-slate-50/50">
+                <CardContent className="p-12 text-center">
+                  <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    {allProducts.length === 0 ? "No products in database" : "No products match your search"}
+                  </h3>
+                  <p className="text-slate-600 mb-4">
+                    {allProducts.length === 0
+                      ? "Start by using AI search to find products, or add products manually via Product Management"
+                      : "Try adjusting your search terms or category filter"}
                   </p>
-                )}
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id || index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card className={`h-full hover:shadow-xl transition-all duration-300 ${product.isAISuggestion ? 'border-2 border-blue-300 bg-blue-50/30' : 'border-slate-200'}`}>
-                    <CardHeader className="pb-3">
-                      <div className="aspect-video bg-slate-100 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
-                        {product.image_url ? (
-                          <img
-                            src={product.image_url}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <ImageIcon className="w-16 h-16 text-slate-300" />
-                        )}
-                      </div>
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg font-bold text-slate-900 mb-2 line-clamp-2">
-                            {product.name}
-                          </CardTitle>
-                          <div className="space-y-2">
-                            {product.category && (
-                              <Badge className={`${categoryColors[product.category]} font-medium`}>
-                                {product.category?.replace('_', ' ')}
-                              </Badge>
-                            )}
-                            {product.isAISuggestion && (
-                              <Badge className="bg-blue-600 text-white ml-2">
-                                AI Suggestion
-                              </Badge>
-                            )}
-                            {product.model_number && (
-                              <p className="text-xs text-slate-500 font-mono mt-2">
-                                Part #: {product.model_number}
-                              </p>
-                            )}
+                  {allProducts.length === 0 && (
+                    <p className="text-sm text-blue-600">
+                      💡 Tip: Use the AI-Powered Search above to find products in your catalog or get AI suggestions
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className={`h-full hover:shadow-xl transition-all duration-300 ${product.isAISuggestion ? 'border-2 border-blue-300 bg-blue-50/30' : 'border-slate-200'}`}>
+                      <CardHeader className="pb-3">
+                        <div className="aspect-video bg-slate-100 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
+                          {product.image_url ? (
+                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <ImageIcon className="w-16 h-16 text-slate-300" />
+                          )}
+                        </div>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg font-bold text-slate-900 mb-2 line-clamp-2">
+                              {product.name}
+                            </CardTitle>
+                            <div className="space-y-2">
+                              {product.category && (
+                                <Badge className={`${categoryColors[product.category]} font-medium`}>
+                                  {product.category?.replace('_', ' ')}
+                                </Badge>
+                              )}
+                              {product.isAISuggestion && (
+                                <Badge className="bg-blue-600 text-white ml-2">AI Suggestion</Badge>
+                              )}
+                              {product.model_number && (
+                                <p className="text-xs text-slate-500 font-mono mt-2">Part #: {product.model_number}</p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {product.manufacturer && (
-                        <p className="text-sm text-slate-600 font-medium">{product.manufacturer}</p>
-                      )}
-                      {product.description && (
-                        <p className="text-sm text-slate-600 line-clamp-3">{product.description}</p>
-                      )}
-                      {product.specifications && (
-                        <p className="text-xs text-slate-500 line-clamp-2">{product.specifications}</p>
-                      )}
-                      <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                          <Plus className="w-4 h-4 mr-1" />
-                          Add to Quote
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {product.manufacturer && (
+                          <p className="text-sm text-slate-600 font-medium">{product.manufacturer}</p>
+                        )}
+                        {product.description && (
+                          <p className="text-sm text-slate-600 line-clamp-3">{product.description}</p>
+                        )}
+                        {product.specifications && (
+                          <p className="text-xs text-slate-500 line-clamp-2">{product.specifications}</p>
+                        )}
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
+                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                            <Plus className="w-4 h-4 mr-1" />
+                            Add to Quote
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
