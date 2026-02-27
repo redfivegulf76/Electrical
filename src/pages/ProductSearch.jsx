@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion } from "framer-motion";
 
 import UpgradePrompt from "../components/shared/UpgradePrompt";
+import { useAISearchLimit } from "../components/shared/useAISearchLimit";
 
 const categories = [
   { value: "all", label: "All Categories" },

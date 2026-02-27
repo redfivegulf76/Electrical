@@ -10,6 +10,7 @@ import { Sparkles, Wand2, FileText, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 
 import UpgradePrompt from "../components/shared/UpgradePrompt";
+import { useAISearchLimit } from "../components/shared/useAISearchLimit";
 
 export default function AIEstimator() {
   const [user, setUser] = useState(null);
