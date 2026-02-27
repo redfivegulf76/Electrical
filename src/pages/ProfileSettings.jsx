@@ -36,6 +36,8 @@ export default function ProfileSettings() {
   const loadUser = async () => {
     const userData = await base44.auth.me();
     setUser(userData);
+    const records = await base44.entities.UserOnboardingStatus.filter({ user_id: userData.email });
+    if (records.length > 0) setOnboardingRecord(records[0]);
     setFormData({
       full_name: userData.full_name || "",
       email: userData.email || "",
@@ -112,12 +114,30 @@ export default function ProfileSettings() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-            Profile Settings
-          </h1>
-          <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+              Profile Settings
+            </h1>
+            <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setShowTour(true)}
+            className="border-cyan-400 text-cyan-700 hover:bg-cyan-50"
+          >
+            <PlayCircle className="w-4 h-4 mr-2" />
+            Replay Tour
+          </Button>
         </div>
+
+        {showTour && user && (
+          <OnboardingModal
+            user={user}
+            onboardingRecord={onboardingRecord}
+            onComplete={() => setShowTour(false)}
+          />
+        )}
 
         <form onSubmit={handleSave} className="space-y-6">
           {/* Profile Picture Section */}
