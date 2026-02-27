@@ -139,6 +139,13 @@ export default function AIEstimator() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {isFreeUser && (
+              <div className={`text-sm px-3 py-2 rounded-lg border ${!canSearch ? 'bg-red-50 border-red-200 text-red-700' : 'bg-purple-50 border-purple-200 text-purple-700'}`}>
+                {!canSearch
+                  ? "You've used all 20 AI searches for this week. Upgrade to Pro for unlimited searches."
+                  : `${searchesRemaining} of 20 free AI searches remaining this week`}
+              </div>
+            )}
             <Textarea
               placeholder="Describe the electrical project in detail... e.g., 'Install complete electrical system for a 2,000 sq ft commercial office including panels, circuits, lighting, outlets, and data cabling'"
               value={description}
@@ -148,7 +155,7 @@ export default function AIEstimator() {
             />
             <Button
               onClick={handleGenerate}
-              disabled={!description || loading}
+              disabled={!description || loading || (!canSearch && isFreeUser)}
               className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg"
             >
               {loading ? (
