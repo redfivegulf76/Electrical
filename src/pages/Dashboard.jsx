@@ -162,21 +162,18 @@ export default function Dashboard() {
 
         {/* Project Limit Warning */}
         {user?.subscription_tier === "Free" && projects.length >= 2 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card className="border-2 border-orange-300 bg-orange-50 shadow-md">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className="border border-amber-200 bg-amber-50">
               <CardContent className="p-4 flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-orange-600" />
+                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
                 <div className="flex-1">
-                  <p className="font-bold text-orange-900">
+                  <p className="font-medium text-amber-900 text-sm">
                     {projects.length === 3 ? "Project Limit Reached" : "Almost at Project Limit"}
                   </p>
-                  <span className="text-orange-700 font-medium">Upgrade to Pro for unlimited projects.</span>
+                  <span className="text-amber-700 text-sm">Upgrade to Pro for unlimited projects.</span>
                 </div>
                 <Link to={createPageUrl("Pricing")}>
-                  <Button variant="outline" className="border-2 border-orange-400 text-orange-700 hover:bg-orange-100 font-bold">
+                  <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100 text-xs">
                     Upgrade
                   </Button>
                 </Link>
