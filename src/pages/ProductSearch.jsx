@@ -73,10 +73,12 @@ export default function ProductSearch() {
     setLoading(false);
   };
 
-  const hasAIAccess = user?.subscription_tier === "Pro" || user?.subscription_tier === "Enterprise";
+  const hasAIAccess = user?.subscription_tier === "Pro" || user?.subscription_tier === "Enterprise" || user?.subscription_tier === "Free" || !user?.subscription_tier;
+  const isFreeUser = !user?.subscription_tier || user?.subscription_tier === "Free";
+  const { canSearch, searchesRemaining, incrementSearch } = useAISearchLimit(user);
 
   const handleAISearch = async () => {
-    if (!hasAIAccess) return;
+    if (!canSearch && isFreeUser) return;
     
     setAiLoading(true);
     setSearchSource("catalog");
