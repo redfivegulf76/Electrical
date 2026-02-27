@@ -79,8 +79,9 @@ export function useAISearchLimit(user) {
     }
   };
 
-  // While loading, allow search (don't block). Once loaded, apply the limit for free users.
-  const canSearch = !loaded || !isFreeUser || searchesUsed < FREE_WEEKLY_LIMIT;
+  // While loading or if there's no user yet, allow search (don't block).
+  // Once loaded, apply the limit for free users.
+  const canSearch = !user?.email || !loaded || !isFreeUser || searchesUsed < FREE_WEEKLY_LIMIT;
   const searchesRemaining = isFreeUser ? Math.max(0, FREE_WEEKLY_LIMIT - searchesUsed) : null;
 
   return { canSearch, searchesUsed, searchesRemaining, loaded, incrementSearch };
