@@ -184,71 +184,69 @@ export default function Dashboard() {
 
         {/* Projects Section */}
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-[#263238]">Your Projects</h2>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-slate-900">Your Projects</h2>
             <Button
               onClick={() => setShowNewProject(true)}
               disabled={!canCreateProject()}
               variant="outline"
-              className="border-2 border-slate-300 hover:bg-slate-100 font-bold"
+              size="sm"
+              className="border-slate-200 text-slate-600 hover:bg-slate-100 text-sm"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-1.5" />
               New Project
             </Button>
           </div>
 
           {showNewProject && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <Card className="mb-6 border-2 border-cyan-300 shadow-lg bg-white">
-                <CardHeader className="border-b-2 border-slate-100">
-                  <CardTitle className="text-[#263238] font-bold">Create New Project</CardTitle>
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+              <Card className="mb-5 border border-slate-200 shadow-sm bg-white">
+                <CardHeader className="border-b border-slate-100 pb-4">
+                  <CardTitle className="text-slate-900 font-semibold text-base">Create New Project</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6">
+                <CardContent className="pt-5">
                   <form onSubmit={handleCreateProject} className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-bold text-slate-700 mb-2 block">Project Name *</label>
+                        <label className="text-sm font-medium text-slate-700 mb-1.5 block">Project Name *</label>
                         <input
                           name="name"
                           required
-                          className="w-full px-4 py-2 border-2 border-slate-300 rounded-md focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-medium"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 placeholder-slate-400 bg-white outline-none"
                           placeholder="Main Street Office Remodel"
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-bold text-slate-700 mb-2 block">Client Name</label>
+                        <label className="text-sm font-medium text-slate-700 mb-1.5 block">Client Name</label>
                         <input
                           name="client_name"
-                          className="w-full px-4 py-2 border-2 border-slate-300 rounded-md focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-medium"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 placeholder-slate-400 bg-white outline-none"
                           placeholder="ABC Corporation"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-bold text-slate-700 mb-2 block">Description</label>
+                      <label className="text-sm font-medium text-slate-700 mb-1.5 block">Description</label>
                       <textarea
                         name="description"
                         rows={3}
-                        className="w-full px-4 py-2 border-2 border-slate-300 rounded-md focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-medium"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 placeholder-slate-400 bg-white outline-none resize-none"
                         placeholder="Complete electrical upgrade for office building..."
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-bold text-slate-700 mb-2 block">Location</label>
+                      <label className="text-sm font-medium text-slate-700 mb-1.5 block">Location</label>
                       <input
                         name="location"
-                        className="w-full px-4 py-2 border-2 border-slate-300 rounded-md focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 font-medium"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 placeholder-slate-400 bg-white outline-none"
                         placeholder="123 Main St, City, State"
                       />
                     </div>
-                    <div className="flex justify-end gap-3 pt-4">
-                      <Button type="button" variant="outline" onClick={() => setShowNewProject(false)} className="border-2 border-slate-300 font-bold">
+                    <div className="flex justify-end gap-2 pt-2">
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setShowNewProject(false)} className="text-slate-600">
                         Cancel
                       </Button>
-                      <Button type="submit" className="bg-cyan-500 hover:bg-cyan-600 text-white border-2 border-cyan-400 font-bold">
+                      <Button type="submit" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
                         Create Project
                       </Button>
                     </div>
@@ -258,45 +256,41 @@ export default function Dashboard() {
             </motion.div>
           )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {projects.map((project) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <Card className="hover:shadow-xl transition-all duration-300 border-2 border-slate-200 h-full bg-white">
-                  <CardHeader className="border-b-2 border-slate-100">
+              <motion.div key={project.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <Card className="hover:shadow-md transition-all duration-200 border border-slate-200 h-full bg-white">
+                  <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
-                        <CardTitle className="text-lg font-bold text-[#263238] mb-2">
+                        <CardTitle className="text-base font-semibold text-slate-900 mb-2 leading-snug">
                           {project.name}
                         </CardTitle>
-                        <Badge className={`${statusColors[project.status]} font-bold text-xs`}>
-                          {project.status.replace('_', ' ').toUpperCase()}
+                        <Badge className={`${statusColors[project.status]} text-xs font-medium`}>
+                          {project.status.replace('_', ' ')}
                         </Badge>
                       </div>
-                      <FolderOpen className="w-8 h-8 text-cyan-500" />
+                      <FolderOpen className="w-5 h-5 text-slate-300 mt-0.5" />
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 pt-4">
+                  <CardContent className="space-y-2 pt-0">
                     {project.client_name && (
                       <div>
-                        <p className="text-xs text-slate-500 font-bold uppercase">Client</p>
-                        <p className="text-sm text-[#263238] font-semibold">{project.client_name}</p>
+                        <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Client</p>
+                        <p className="text-sm text-slate-700">{project.client_name}</p>
                       </div>
                     )}
                     {project.location && (
                       <div>
-                        <p className="text-xs text-slate-500 font-bold uppercase">Location</p>
-                        <p className="text-sm text-[#263238] font-semibold">{project.location}</p>
+                        <p className="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Location</p>
+                        <p className="text-sm text-slate-700">{project.location}</p>
                       </div>
                     )}
                     {project.description && (
-                      <p className="text-sm text-slate-600 line-clamp-2 font-medium">{project.description}</p>
+                      <p className="text-sm text-slate-500 line-clamp-2">{project.description}</p>
                     )}
-                    <div className="pt-3 border-t-2 border-slate-100">
-                      <p className="text-xs text-slate-500 font-semibold">
+                    <div className="pt-2 border-t border-slate-100">
+                      <p className="text-xs text-slate-400">
                         Created {format(new Date(project.created_date), "MMM d, yyyy")}
                       </p>
                     </div>
@@ -306,13 +300,13 @@ export default function Dashboard() {
             ))}
 
             {projects.length === 0 && (
-              <Card className="md:col-span-2 lg:col-span-3 border-2 border-dashed border-slate-300 bg-slate-100">
+              <Card className="md:col-span-2 lg:col-span-3 border border-dashed border-slate-200 bg-white">
                 <CardContent className="p-12 text-center">
-                  <FolderOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-[#263238] mb-2">No projects yet</h3>
-                  <p className="text-slate-600 mb-6 font-medium">Create your first project to get started</p>
-                  <Button onClick={() => setShowNewProject(true)} className="bg-cyan-500 hover:bg-cyan-600 text-white border-2 border-cyan-400 font-bold">
-                    <Plus className="w-4 h-4 mr-2" />
+                  <FolderOpen className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+                  <h3 className="text-base font-semibold text-slate-700 mb-1">No projects yet</h3>
+                  <p className="text-slate-400 text-sm mb-5">Create your first project to get started</p>
+                  <Button onClick={() => setShowNewProject(true)} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+                    <Plus className="w-4 h-4 mr-1.5" />
                     Create First Project
                   </Button>
                 </CardContent>
@@ -324,24 +318,26 @@ export default function Dashboard() {
         {/* Recent Quote Lists */}
         {quoteLists.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-[#263238]">Recent Quote Lists</h2>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-semibold text-slate-900">Recent Quote Lists</h2>
               <Link to={createPageUrl("QuoteLists")}>
-                <Button variant="outline" className="border-2 border-slate-300 hover:bg-slate-100 font-bold">
+                <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-700 text-sm">
                   View All
                 </Button>
               </Link>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {quoteLists.slice(0, 6).map((list) => (
-                <Card key={list.id} className="hover:shadow-lg transition-all border-2 border-slate-200 bg-white">
-                  <CardHeader>
+                <Card key={list.id} className="hover:shadow-md transition-all border border-slate-200 bg-white">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
-                      <FileText className="w-6 h-6 text-green-500" />
-                      <div className="flex-1">
-                        <CardTitle className="text-base font-bold text-[#263238]">{list.name}</CardTitle>
-                        <p className="text-xs text-slate-500 mt-1 font-semibold">
+                      <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-4 h-4 text-slate-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-sm font-medium text-slate-900 truncate">{list.name}</CardTitle>
+                        <p className="text-xs text-slate-400 mt-0.5">
                           {format(new Date(list.created_date), "MMM d, yyyy")}
                         </p>
                       </div>
