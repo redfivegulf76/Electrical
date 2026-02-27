@@ -91,13 +91,13 @@ const navigationItems = [
     title: "AI Data Extractor",
     url: createPageUrl("DataExtractor"),
     icon: Bot,
-    tierAccess: ["Pro", "Enterprise"]
+    adminOnly: true
   },
   {
     title: "Extraction Dashboard",
     url: createPageUrl("ExtractionDashboard"),
     icon: Database,
-    tierAccess: ["Pro", "Enterprise"]
+    adminOnly: true
   },
   {
     title: "Upgrade Plan",
