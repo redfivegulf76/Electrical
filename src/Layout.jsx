@@ -185,22 +185,22 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       <div className="min-h-screen flex w-full bg-slate-50">
         <Sidebar className="border-r border-slate-200 bg-white">
-          <SidebarHeader className="border-b-2 border-slate-700 p-6">
+          <SidebarHeader className="border-b border-slate-100 p-5">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center shadow-lg border-2 border-cyan-300">
-                <Zap className="w-6 h-6 text-white" />
+              <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-lg tracking-tight">AIpartsFinder</h2>
-                <p className="text-xs text-cyan-300 font-medium">Electrical Estimating</p>
+                <h2 className="font-semibold text-slate-900 text-base tracking-tight">AIpartsFinder</h2>
+                <p className="text-xs text-slate-400">Electrical Estimating</p>
               </div>
             </div>
           </SidebarHeader>
           
           <SidebarContent className="p-3">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 py-2 mb-1">
-                Main Menu
+              <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-2 py-2 mb-1">
+                Navigation
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -212,25 +212,25 @@ export default function Layout({ children, currentPageName }) {
                           asChild={hasAccess}
                           disabled={!hasAccess}
                           className={`
-                            group relative rounded-md mb-1 transition-all duration-200 border-2
+                            group relative rounded-lg mb-0.5 transition-all duration-150
                             ${location.pathname === item.url 
-                              ? 'bg-cyan-500 text-white border-cyan-400 shadow-lg' 
+                              ? 'bg-blue-50 text-blue-700' 
                               : hasAccess 
-                                ? 'hover:bg-slate-700 text-slate-200 border-transparent hover:border-slate-600' 
-                                : 'opacity-40 cursor-not-allowed text-slate-500 border-transparent'
+                                ? 'hover:bg-slate-100 text-slate-600 hover:text-slate-900' 
+                                : 'opacity-40 cursor-not-allowed text-slate-400'
                             }
                           `}
                         >
                           {hasAccess ? (
-                            <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
-                              <item.icon className="w-5 h-5" />
-                              <span className="font-semibold text-sm">{item.title}</span>
+                            <Link to={item.url} className="flex items-center gap-3 px-3 py-2">
+                              <item.icon className={`w-4 h-4 ${location.pathname === item.url ? 'text-blue-600' : 'text-slate-400'}`} />
+                              <span className="font-medium text-sm">{item.title}</span>
                             </Link>
                           ) : (
-                            <div className="flex items-center gap-3 px-3 py-2.5">
-                              <item.icon className="w-5 h-5" />
-                              <span className="font-semibold text-sm">{item.title}</span>
-                              <Crown className="w-3 h-3 ml-auto text-orange-400" />
+                            <div className="flex items-center gap-3 px-3 py-2">
+                              <item.icon className="w-4 h-4 text-slate-400" />
+                              <span className="font-medium text-sm">{item.title}</span>
+                              <Crown className="w-3 h-3 ml-auto text-slate-400" />
                             </div>
                           )}
                         </SidebarMenuButton>
@@ -242,17 +242,17 @@ export default function Layout({ children, currentPageName }) {
             </SidebarGroup>
 
             {user && user.subscription_tier === "Free" && (
-              <SidebarGroup className="mt-6">
-                <div className="mx-3 p-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg border-2 border-orange-400">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Crown className="w-5 h-5 text-yellow-300" />
-                    <span className="font-bold text-white text-sm">Upgrade to Pro</span>
+              <SidebarGroup className="mt-4">
+                <div className="mx-2 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Crown className="w-4 h-4 text-blue-500" />
+                    <span className="font-semibold text-slate-800 text-sm">Upgrade to Pro</span>
                   </div>
-                  <p className="text-xs text-orange-100 mb-3 leading-relaxed">
-                    Unlock AI tools, unlimited projects, and premium features
+                  <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                    Unlock AI tools, unlimited projects, and more
                   </p>
                   <Link to={createPageUrl("PaymentPortal")}>
-                    <Button className="w-full bg-white text-orange-600 hover:bg-orange-50 shadow-md text-sm font-bold border-2 border-white">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">
                       View Plans
                     </Button>
                   </Link>
@@ -261,11 +261,11 @@ export default function Layout({ children, currentPageName }) {
             )}
           </SidebarContent>
 
-          <SidebarFooter className="border-t-2 border-slate-700 p-4">
+          <SidebarFooter className="border-t border-slate-100 p-4">
             {user && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg flex items-center justify-center border-2 border-cyan-300 overflow-hidden">
+                  <div className="w-9 h-9 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
                     {user.profile_picture_url ? (
                       <img
                         src={user.profile_picture_url}
@@ -273,29 +273,27 @@ export default function Layout({ children, currentPageName }) {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-white font-bold text-sm">
+                      <span className="text-slate-600 font-semibold text-sm">
                         {user.full_name?.[0]?.toUpperCase() || 'U'}
                       </span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-white text-sm truncate">{user.full_name}</p>
+                    <p className="font-medium text-slate-900 text-sm truncate">{user.full_name}</p>
                     <p className="text-xs text-slate-400 truncate">{user.email}</p>
                   </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <Badge className={`${tierColors[user.subscription_tier]} border-2 font-bold text-xs`}>
-                    {user.subscription_tier}
-                  </Badge>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleLogout}
-                    className="text-slate-400 hover:text-white hover:bg-slate-700"
+                    className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 h-8 w-8 p-0"
                   >
                     <LogOut className="w-4 h-4" />
                   </Button>
                 </div>
+                <Badge className={`${tierColors[user.subscription_tier]} text-xs font-medium`}>
+                  {user.subscription_tier}
+                </Badge>
               </div>
             )}
           </SidebarFooter>
