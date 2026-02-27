@@ -300,7 +300,7 @@ export default function Layout({ children, currentPageName }) {
         </Sidebar>
 
         <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="bg-[#263238] border-b-2 border-slate-700 px-6 py-4 lg:hidden">
+          <header className="bg-white border-b border-slate-200 px-5 py-3 lg:hidden">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="hover:bg-slate-700 p-2 rounded-lg transition-colors text-white">
                 <Menu className="w-5 h-5" />
