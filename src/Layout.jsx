@@ -318,6 +318,16 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </main>
       </div>
+
+      {/* Onboarding Modal */}
+      {showOnboarding && user && (
+        <OnboardingModal
+          user={user}
+          onboardingRecord={onboardingRecord}
+          onComplete={() => setShowOnboarding(false)}
+        />
+        </main>
+      </div>
     </SidebarProvider>
   );
 }
