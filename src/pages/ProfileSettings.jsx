@@ -341,6 +341,67 @@ export default function ProfileSettings() {
             </CardContent>
           </Card>
 
+          {/* Danger Zone */}
+          <Card className="border-2 border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-700 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Danger Zone
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!showDeleteConfirm ? (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-slate-900">Delete Account</p>
+                    <p className="text-sm text-slate-600">Permanently delete your account and all data. This cannot be undone.</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="border-2 border-red-400 text-red-600 hover:bg-red-100 font-bold ml-4 shrink-0"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Account
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm font-semibold text-red-700">
+                    Type <span className="font-mono bg-red-100 px-1 rounded">DELETE</span> to confirm account deletion:
+                  </p>
+                  <input
+                    type="text"
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                    placeholder="Type DELETE to confirm"
+                    className="w-full px-4 py-2 border-2 border-red-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+                      className="border-2 border-slate-300"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      disabled={deleteConfirmText !== "DELETE"}
+                      onClick={() => alert("To fully delete your account, please contact support@aipartsfinder.com")}
+                      className="bg-red-600 hover:bg-red-700 text-white font-bold disabled:opacity-40"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Permanently Delete
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Save Button */}
           <div className="flex justify-end gap-3">
             {saved && (
