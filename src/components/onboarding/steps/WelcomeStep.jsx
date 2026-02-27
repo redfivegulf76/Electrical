@@ -21,7 +21,7 @@ export default function WelcomeStep({ onStart, onSkip }) {
         transition={{ delay: 0.2 }}
       >
         <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-3">
-          Welcome to PackOutAI
+          Welcome to AIpartsFinder
         </h1>
         <p className="text-lg text-slate-500 max-w-md mx-auto leading-relaxed mb-10">
           AI-powered estimating and electrical intelligence for modern contractors.

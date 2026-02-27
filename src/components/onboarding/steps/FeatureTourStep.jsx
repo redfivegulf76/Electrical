@@ -16,7 +16,7 @@ const getFeatures = (roleType) => {
       title: "AI Estimator",
       color: "from-cyan-500 to-cyan-700",
       badge: null,
-      tooltip: "Describe your project here. PackOutAI builds your material list instantly.",
+      tooltip: "Describe your project here. AIpartsFinder builds your material list instantly.",
       demo: "Install 200A residential service with outdoor main panel and 12 branch circuits.",
       demoLabel: "Try Sample Project"
     },

@@ -193,7 +193,7 @@ export default function Layout({ children, currentPageName }) {
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-lg tracking-tight">PackOutAI</h2>
+                <h2 className="font-bold text-white text-lg tracking-tight">AIpartsFinder</h2>
                 <p className="text-xs text-cyan-300 font-medium">Electrical Estimating</p>
               </div>
             </div>
@@ -309,7 +309,7 @@ export default function Layout({ children, currentPageName }) {
               <SidebarTrigger className="hover:bg-slate-700 p-2 rounded-lg transition-colors text-white">
                 <Menu className="w-5 h-5" />
               </SidebarTrigger>
-              <h1 className="text-lg font-bold text-white">PackOutAI</h1>
+              <h1 className="text-lg font-bold text-white">AIpartsFinder</h1>
             </div>
           </header>
 
