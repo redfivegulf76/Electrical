@@ -1,13 +1,14 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge"; // Added Badge import
-import { User as UserIcon, Upload, Save, Camera } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { User as UserIcon, Upload, Save, Camera, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useOnboarding } from "../components/onboarding/useOnboarding";
+import OnboardingModal from "../components/onboarding/OnboardingModal";
 
 export default function ProfileSettings() {
   const [user, setUser] = useState(null);

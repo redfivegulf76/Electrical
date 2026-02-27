@@ -36,6 +36,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showNewProject, setShowNewProject] = useState(false);
 
+  const { showOnboarding, onboardingRecord, completeOnboarding } = useOnboarding(user);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -85,6 +87,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 lg:p-8">
+      {showOnboarding && (
+        <OnboardingModal
+          onComplete={completeOnboarding}
+          onboardingRecord={onboardingRecord}
+        />
+      )}
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
