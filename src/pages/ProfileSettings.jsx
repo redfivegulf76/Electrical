@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User as UserIcon, Upload, Save, Camera, PlayCircle } from "lucide-react";
+import { User as UserIcon, Upload, Save, Camera, PlayCircle, Trash2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import OnboardingModal from "@/components/onboarding/OnboardingModal";
 
