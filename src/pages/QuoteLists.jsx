@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { QuoteList } from "@/entities/QuoteList";
-import { QuoteItem } from "@/entities/QuoteItem";
-import { Project } from "@/entities/Project";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,18 +38,18 @@ export default function QuoteLists() {
   }, []);
 
   const loadData = async () => {
-    const userData = await User.me();
+    const userData = await base44.auth.me();
     setUser(userData);
     
-    const listsData = await QuoteList.list("-created_date");
+    const listsData = await base44.entities.QuoteList.list("-created_date");
     setQuoteLists(listsData);
     
-    const projectsData = await Project.list("-created_date");
+    const projectsData = await base44.entities.Project.list("-created_date");
     setProjects(projectsData);
   };
 
   const loadItems = async (listId) => {
-    const itemsData = await QuoteItem.filter({ quote_list_id: listId });
+    const itemsData = await base44.entities.QuoteItem.filter({ quote_list_id: listId });
     setItems(itemsData);
   };
 
@@ -64,7 +61,7 @@ export default function QuoteLists() {
   const handleCreateList = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const newList = await QuoteList.create({
+    const newList = await base44.entities.QuoteList.create({
       name: formData.get("name"),
       project_id: formData.get("project_id"),
       notes: formData.get("notes"),
@@ -78,7 +75,7 @@ export default function QuoteLists() {
   const handleAddItem = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    await QuoteItem.create({
+    await base44.entities.QuoteItem.create({
       quote_list_id: selectedList.id,
       product_name: formData.get("product_name"),
       quantity: parseFloat(formData.get("quantity")),
@@ -90,7 +87,7 @@ export default function QuoteLists() {
   };
 
   const handleDeleteItem = async (itemId) => {
-    await QuoteItem.delete(itemId);
+    await base44.entities.QuoteItem.delete(itemId);
     loadItems(selectedList.id);
   };
 
@@ -100,7 +97,7 @@ export default function QuoteLists() {
 
   const canCreateList = () => {
     if (!user) return false;
-    const limit = tierLimits[user.subscription_tier].maxLists;
+    const limit = tierLimits[user.subscription_tier]?.maxLists ?? 3;
     return quoteLists.length < limit;
   };
 
@@ -196,7 +193,7 @@ export default function QuoteLists() {
                       >
                         <option value="">Select a project...</option>
                         {projects.map(p => (
-                          <option key={p.id} value={p.id}>{p.name}</option>
+                          <option key={p.id} value={p.id}>{p.project_name}</option>
                         ))}
                       </select>
                     </div>
