@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import OnboardingModal from "@/components/onboarding/OnboardingModal";
 import {
@@ -156,7 +155,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleLogout = async () => {
-    await User.logout();
+    await base44.auth.logout();
   };
 
   const canAccessFeature = (tierAccess) => {
