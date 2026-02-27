@@ -49,44 +49,44 @@
  */
 import AIEstimator from './pages/AIEstimator';
 import Dashboard from './pages/Dashboard';
+import DataExtractor from './pages/DataExtractor';
 import ElectricianDirectory from './pages/ElectricianDirectory';
 import EmailSend from './pages/EmailSend';
+import ExtractionDashboard from './pages/ExtractionDashboard';
 import Home from './pages/Home';
+import MaterialListViewer from './pages/MaterialListViewer';
 import PaymentPortal from './pages/PaymentPortal';
 import Pricing from './pages/Pricing';
 import ProductManagement from './pages/ProductManagement';
 import ProductSearch from './pages/ProductSearch';
 import ProfileSettings from './pages/ProfileSettings';
+import ProjectInput from './pages/ProjectInput';
 import QuoteLists from './pages/QuoteLists';
+import ReviewExtractions from './pages/ReviewExtractions';
 import SupplierDirectory from './pages/SupplierDirectory';
 import Templates from './pages/Templates';
-import ProjectInput from './pages/ProjectInput';
-import MaterialListViewer from './pages/MaterialListViewer';
-import DataExtractor from './pages/DataExtractor';
-import ExtractionDashboard from './pages/ExtractionDashboard';
-import ReviewExtractions from './pages/ReviewExtractions';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIEstimator": AIEstimator,
     "Dashboard": Dashboard,
+    "DataExtractor": DataExtractor,
     "ElectricianDirectory": ElectricianDirectory,
     "EmailSend": EmailSend,
+    "ExtractionDashboard": ExtractionDashboard,
     "Home": Home,
+    "MaterialListViewer": MaterialListViewer,
     "PaymentPortal": PaymentPortal,
     "Pricing": Pricing,
     "ProductManagement": ProductManagement,
     "ProductSearch": ProductSearch,
     "ProfileSettings": ProfileSettings,
+    "ProjectInput": ProjectInput,
     "QuoteLists": QuoteLists,
+    "ReviewExtractions": ReviewExtractions,
     "SupplierDirectory": SupplierDirectory,
     "Templates": Templates,
-    "ProjectInput": ProjectInput,
-    "MaterialListViewer": MaterialListViewer,
-    "DataExtractor": DataExtractor,
-    "ExtractionDashboard": ExtractionDashboard,
-    "ReviewExtractions": ReviewExtractions,
 }
 
 export const pagesConfig = {

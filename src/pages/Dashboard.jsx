@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { Project } from "@/entities/Project";
@@ -14,6 +13,8 @@ import { motion } from "framer-motion";
 
 import StatCard from "../components/shared/StatCard";
 import TierBadge from "../components/shared/TierBadge";
+import OnboardingModal from "../components/onboarding/OnboardingModal";
+import { useOnboarding } from "../components/onboarding/useOnboarding";
 
 const tierLimits = {
   Free: { maxProjects: 3 },
