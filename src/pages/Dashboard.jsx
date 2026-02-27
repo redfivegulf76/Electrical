@@ -87,6 +87,7 @@ export default function Dashboard() {
   }
 
   return (
+    <PullToRefresh onRefresh={loadData}>
     <div className="min-h-screen bg-slate-50 p-6 lg:p-8">
       {showOnboarding && (
         <OnboardingModal
@@ -359,5 +360,6 @@ export default function Dashboard() {
         )}
       </div>
     </div>
+    </PullToRefresh>
   );
 }

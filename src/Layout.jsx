@@ -314,11 +314,12 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto bg-slate-50">
+          <div className="flex-1 overflow-auto bg-slate-50 pb-safe">
             {children}
           </div>
         </main>
       </div>
+      <BottomTabBar />
 
       {showOnboarding && user && (
         <OnboardingModal
