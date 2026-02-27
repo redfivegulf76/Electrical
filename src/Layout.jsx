@@ -327,8 +327,6 @@ export default function Layout({ children, currentPageName }) {
           onComplete={() => setShowOnboarding(false)}
         />
       )}
-        </main>
-      </div>
     </SidebarProvider>
   );
 }
