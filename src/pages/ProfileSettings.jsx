@@ -12,6 +12,7 @@ import OnboardingModal from "../components/onboarding/OnboardingModal";
 
 export default function ProfileSettings() {
   const [user, setUser] = useState(null);
+  const { showOnboarding, onboardingRecord, completeOnboarding, replayTour } = useOnboarding(user);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -110,12 +111,25 @@ export default function ProfileSettings() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-8">
+      {showOnboarding && (
+        <OnboardingModal onComplete={completeOnboarding} onboardingRecord={onboardingRecord} />
+      )}
       <div className="max-w-4xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
-            Profile Settings
-          </h1>
-          <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
+              Profile Settings
+            </h1>
+            <p className="text-slate-600 mt-2">Manage your profile and personal information</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={replayTour}
+            className="border-2 border-cyan-300 text-cyan-700 hover:bg-cyan-50 font-bold"
+          >
+            <PlayCircle className="w-4 h-4 mr-2" />
+            Replay Tour
+          </Button>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
