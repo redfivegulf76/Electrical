@@ -302,10 +302,10 @@ export default function Layout({ children, currentPageName }) {
         <main className="flex-1 flex flex-col overflow-hidden">
           <header className="bg-white border-b border-slate-200 px-5 py-3 lg:hidden">
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="hover:bg-slate-700 p-2 rounded-lg transition-colors text-white">
+              <SidebarTrigger className="hover:bg-slate-100 p-2 rounded-lg transition-colors text-slate-600">
                 <Menu className="w-5 h-5" />
               </SidebarTrigger>
-              <h1 className="text-lg font-bold text-white">AIpartsFinder</h1>
+              <h1 className="text-base font-semibold text-slate-900">AIpartsFinder</h1>
             </div>
           </header>
 
