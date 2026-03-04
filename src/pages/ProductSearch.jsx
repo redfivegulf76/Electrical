@@ -75,170 +75,33 @@ export default function ProductSearch() {
     if (!canSearch) return;
 
     setAiLoading(true);
-    setSearchSource("catalog");
+    setSearchSource("agent");
     setGeneratedMaterialList(null);
+    setDisplayedProducts([]);
 
     try {
-      const extractionResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an electrical supply expert. Analyze this search query and extract relevant search parameters: "${aiQuery}"
-        
-        Extract:
-        - keywords: Important words to search for in product names, descriptions, or specifications
-        - categories: Which product categories are most relevant? Choose from: wire_cable, conduit, boxes, switches_outlets, lighting, panels, breakers, tools, safety, other
-        - manufacturers: Any specific manufacturers mentioned or implied?
-        - construction_units: Identify specific construction units (outlet, switch, light_fixture, circuit_run, panel) and their quantities if mentioned
-        - is_quantity_based: true if the user is asking for materials for a specific quantity of installations (e.g., "materials for 10 outlets")
-        - project_category: Identify if residential, commercial, or industrial project is implied
-        
-        Examples:
-        - "I need materials for 10 outlets" → is_quantity_based: true, construction_units: [{type: "outlet", quantity: 10}]
-        - "15 light switches for a house" → is_quantity_based: true, construction_units: [{type: "switch", quantity: 15}], project_category: "residential"
-        - "conduit fittings" → is_quantity_based: false, keywords: ["conduit", "fittings"]
-        
-        Be thorough but focused. If something isn't mentioned, leave it empty.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            keywords: { type: "array", items: { type: "string" } },
-            categories: { type: "array", items: { type: "string" } },
-            manufacturers: { type: "array", items: { type: "string" } },
-            construction_units: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  type: { type: "string" },
-                  quantity: { type: "number" }
-                }
-              }
-            },
-            is_quantity_based: { type: "boolean" },
-            project_category: { type: "string" }
-          }
-        }
-      });
+      await incrementSearch();
 
-      // Handle quantity-based queries
-      if (extractionResult.is_quantity_based && extractionResult.construction_units?.length > 0) {
-        const materialLists = await Promise.all(
-          extractionResult.construction_units.map(async (unit) => {
-            const templates = await base44.entities.MaterialTemplate.filter({
-              construction_unit_type: unit.type,
-              ...(extractionResult.project_category ? { category: extractionResult.project_category } : {})
-            });
+      // Create or reuse conversation
+      let conversation = agentConversation;
+      if (!conversation) {
+        conversation = await base44.agents.createConversation({
+          agent_name: "product_search",
+          metadata: { name: "Product Search" }
+        });
+        setAgentConversation(conversation);
 
-            if (templates.length === 0) return null;
-
-            const template = templates[0];
-            const expandedItems = template.items.map(item => ({
-              ...item,
-              total_quantity: item.quantity_multiplier * unit.quantity,
-              construction_unit: unit.type,
-              requested_quantity: unit.quantity
-            }));
-
-            return {
-              construction_unit: unit.type,
-              quantity: unit.quantity,
-              template_name: template.name,
-              labor_hours: (template.labor_hours_per_unit || 0) * unit.quantity,
-              items: expandedItems
-            };
-          })
-        );
-
-        const validMaterialLists = materialLists.filter(list => list !== null);
-
-        if (validMaterialLists.length > 0) {
-          setGeneratedMaterialList(validMaterialLists);
-          setDisplayedProducts([]);
-          setSearchQuery("");
-          setCategory("all");
-          setSearchSource("material_list");
-          await incrementSearch();
-          setAiLoading(false);
-          return;
-        }
+        // Subscribe to updates
+        base44.agents.subscribeToConversation(conversation.id, (data) => {
+          setAgentMessages([...data.messages]);
+        });
       }
 
-      // Regular catalog search
-      let catalogResults = allProducts.filter(product => {
-        const keywordMatch = !extractionResult.keywords?.length || extractionResult.keywords.some(kw => {
-          const keyword = kw.toLowerCase();
-          return (
-            product.name?.toLowerCase().includes(keyword) ||
-            product.description?.toLowerCase().includes(keyword) ||
-            product.specifications?.toLowerCase().includes(keyword) ||
-            product.manufacturer?.toLowerCase().includes(keyword)
-          );
-        });
-
-        const categoryMatch = !extractionResult.categories?.length ||
-          extractionResult.categories.includes(product.category);
-
-        const manufacturerMatch = !extractionResult.manufacturers?.length ||
-          extractionResult.manufacturers.some(mfr =>
-            product.manufacturer?.toLowerCase().includes(mfr.toLowerCase())
-          );
-
-        return keywordMatch && categoryMatch && manufacturerMatch;
+      await base44.agents.addMessage(conversation, {
+        role: "user",
+        content: aiQuery
       });
 
-      if (catalogResults.length >= 3) {
-        setDisplayedProducts(catalogResults);
-        setSearchQuery("");
-        setCategory("all");
-        await incrementSearch();
-        setSearchSource("catalog");
-      } else {
-        const generationResult = await base44.integrations.Core.InvokeLLM({
-          prompt: `You are an electrical supply expert. The user is searching for: "${aiQuery}". 
-          
-          We found ${catalogResults.length} products in the catalog, but need more suggestions.
-          Generate 5 relevant electrical products with realistic details.
-          
-          For each product, provide:
-          - name: Product name
-          - category: Choose from: wire_cable, conduit, boxes, switches_outlets, lighting, panels, breakers, tools, safety, other
-          - manufacturer: Manufacturer name
-          - description: Detailed product description
-          - specifications: Technical specifications (optional)
-          - model_number: Model or part number (optional)
-          
-          Focus on products that would be commonly available from electrical suppliers.`,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              products: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    name: { type: "string" },
-                    category: { type: "string" },
-                    manufacturer: { type: "string" },
-                    description: { type: "string" },
-                    specifications: { type: "string" },
-                    model_number: { type: "string" }
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        const aiProducts = generationResult.products?.map(p => ({
-          ...p,
-          isAISuggestion: true,
-          unit: "each"
-        })) || [];
-
-        await incrementSearch();
-        setDisplayedProducts([...catalogResults, ...aiProducts]);
-        setSearchQuery("");
-        setCategory("all");
-        setSearchSource(catalogResults.length > 0 ? "mixed" : "ai");
-      }
     } catch (error) {
       console.error("AI search error:", error);
     }
