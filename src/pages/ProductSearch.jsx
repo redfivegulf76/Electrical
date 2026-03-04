@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon, Wrench, Calculator } from "lucide-react";
+import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon, Wrench, Calculator, Bot, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { useAISearchLimit } from "../components/shared/useAISearchLimit";
+import ReactMarkdown from "react-markdown";
 
 const categories = [
   { value: "all", label: "All Categories" },
