@@ -137,6 +137,10 @@ export default function Layout({ children, currentPageName }) {
       const userData = await base44.auth.me();
       setUser(userData);
 
+      // Check if product data exists
+      const products = await base44.entities.CoreProduct.list('-created_date', 1);
+      setHasProducts(products.length > 0);
+
       // Check onboarding status
       const records = await base44.entities.UserOnboardingStatus.filter({ user_id: userData.email });
       if (records.length === 0) {
