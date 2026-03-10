@@ -76,7 +76,7 @@ export default function AIEstimator() {
   const handleSaveToQuoteList = async () => {
     if (!estimate) return;
     
-    const newList = await QuoteList.create({
+    const newList = await base44.entities.QuoteList.create({
       name: `AI Estimate - ${new Date().toLocaleDateString()}`,
       notes: estimate.project_summary,
       status: "draft"
