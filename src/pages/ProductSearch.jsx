@@ -8,7 +8,6 @@ import { Search, Sparkles, Package, Filter, Plus, Database, Image as ImageIcon, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { useAISearchLimit } from "../components/shared/useAISearchLimit";
-import ReactMarkdown from "react-markdown";
 
 const categories = [
   { value: "all", label: "All Categories" },
