@@ -79,33 +79,49 @@ export default function ProductSearch() {
     setSearchSource("agent");
     setGeneratedMaterialList(null);
     setDisplayedProducts([]);
+    setAiResults([]);
+    setAiSummary("");
 
-    try {
-      await incrementSearch();
+    await incrementSearch();
 
-      // Create or reuse conversation
-      let conversation = agentConversation;
-      if (!conversation) {
-        conversation = await base44.agents.createConversation({
-          agent_name: "product_search",
-          metadata: { name: "Product Search" }
-        });
-        setAgentConversation(conversation);
-
-        // Subscribe to updates
-        base44.agents.subscribeToConversation(conversation.id, (data) => {
-          setAgentMessages([...data.messages]);
-        });
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are an expert electrical supply product researcher. Search the internet and find real electrical products that match this request: "${aiQuery}". 
+      
+      Find 6-10 real products from actual manufacturers like Eaton, Square D, Leviton, Hubbell, Southwire, Lutron, Legrand, Siemens, ABB, etc.
+      Return accurate product names, real manufacturer part numbers (MPNs), and detailed specifications.
+      For image_url, use real product image URLs from manufacturer websites or distributor sites like Grainger, Graybar, Rexel if you can find them, otherwise leave blank.
+      For buy_url, provide a real URL where this product can be purchased (e.g. Grainger, Home Depot Pro, Graybar, Amazon Business).
+      Also provide a brief summary of your findings in the summary field.`,
+      add_context_from_internet: true,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          summary: { type: "string" },
+          products: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                manufacturer: { type: "string" },
+                model_number: { type: "string" },
+                category: { type: "string", enum: ["wire_cable","conduit","boxes","switches_outlets","lighting","panels","breakers","disconnects","transformers","motors","safety","tools","other"] },
+                description: { type: "string" },
+                specifications: { type: "string" },
+                image_url: { type: "string" },
+                buy_url: { type: "string" },
+                price_range: { type: "string" }
+              }
+            }
+          }
+        }
       }
+    });
 
-      await base44.agents.addMessage(conversation, {
-        role: "user",
-        content: aiQuery
-      });
-
-    } catch (error) {
-      console.error("AI search error:", error);
-    }
+    setAiSummary(result.summary || "");
+    const products = (result.products || []).map(p => ({ ...p, isAISuggestion: true }));
+    setAiResults(products);
+    setDisplayedProducts(products);
     setAiLoading(false);
   };
 
