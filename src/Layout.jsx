@@ -126,6 +126,7 @@ export default function Layout({ children, currentPageName }) {
   const [loading, setLoading] = React.useState(true);
   const [showOnboarding, setShowOnboarding] = React.useState(false);
   const [onboardingRecord, setOnboardingRecord] = React.useState(null);
+  const [hasProducts, setHasProducts] = React.useState(false);
 
   React.useEffect(() => {
     loadUser();
