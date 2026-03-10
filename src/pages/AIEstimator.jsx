@@ -90,7 +90,7 @@ export default function AIEstimator() {
       unit_price: item.unit_price
     }));
 
-    await QuoteItem.bulkCreate(items);
+    await base44.entities.QuoteItem.bulkCreate(items);
     
     alert("Estimate saved to Quote Lists!");
   };
