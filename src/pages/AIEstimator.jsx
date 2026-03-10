@@ -52,7 +52,8 @@ export default function AIEstimator() {
                   quantity: { type: "number" },
                   unit: { type: "string" },
                   unit_price: { type: "number" },
-                  total: { type: "number" }
+                  total: { type: "number" },
+                  image_url: { type: "string" }
                 }
               }
             },
