@@ -166,9 +166,10 @@ export default function Layout({ children, currentPageName }) {
     await base44.auth.logout();
   };
 
-  const canAccessFeature = (tierAccess, adminOnly) => {
+  const canAccessFeature = (tierAccess, adminOnly, requiresProducts) => {
     if (!user) return false;
     if (adminOnly) return user.role === 'admin';
+    if (requiresProducts && !hasProducts && user.role !== 'admin') return false;
     if (tierAccess === "all") return true;
     if (Array.isArray(tierAccess)) {
       return tierAccess.includes(user.subscription_tier);
