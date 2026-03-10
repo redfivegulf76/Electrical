@@ -69,15 +69,26 @@ export default function Dashboard() {
   const handleCreateProject = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    await Project.create({
+    const optimisticProject = {
+      id: `temp-${Date.now()}`,
       name: formData.get("name"),
       description: formData.get("description"),
       client_name: formData.get("client_name"),
       location: formData.get("location"),
+      status: "planning",
+      created_date: new Date().toISOString(),
+      estimated_budget: 0
+    };
+    setProjects(prev => [optimisticProject, ...prev]);
+    setShowNewProject(false);
+    const created = await Project.create({
+      name: optimisticProject.name,
+      description: optimisticProject.description,
+      client_name: optimisticProject.client_name,
+      location: optimisticProject.location,
       status: "planning"
     });
-    setShowNewProject(false);
-    loadData();
+    setProjects(prev => prev.map(p => p.id === optimisticProject.id ? created : p));
   };
 
   if (loading) {

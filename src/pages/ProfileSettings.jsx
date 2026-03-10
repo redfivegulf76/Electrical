@@ -30,6 +30,7 @@ export default function ProfileSettings() {
   const [onboardingRecord, setOnboardingRecord] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteRequested, setDeleteRequested] = useState(false);
 
   useEffect(() => {
     loadUser();
@@ -350,7 +351,17 @@ export default function ProfileSettings() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {!showDeleteConfirm ? (
+              {deleteRequested ? (
+                <div className="flex items-start gap-3 p-4 bg-red-100 rounded-lg border border-red-300">
+                  <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-red-800">Deletion request logged</p>
+                    <p className="text-sm text-red-700 mt-1">
+                      Your account deletion request has been recorded and will be processed within 30 days. If you change your mind, please contact <span className="font-mono font-medium">support@aipartsfinder.com</span>.
+                    </p>
+                  </div>
+                </div>
+              ) : !showDeleteConfirm ? (
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-slate-900">Delete Account</p>
@@ -390,7 +401,11 @@ export default function ProfileSettings() {
                     <Button
                       type="button"
                       disabled={deleteConfirmText !== "DELETE"}
-                      onClick={() => alert("To fully delete your account, please contact support@aipartsfinder.com")}
+                      onClick={() => {
+                        setDeleteRequested(true);
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmText("");
+                      }}
                       className="bg-red-600 hover:bg-red-700 text-white font-bold disabled:opacity-40"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />

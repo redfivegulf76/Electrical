@@ -61,34 +61,54 @@ export default function QuoteLists() {
   const handleCreateList = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const newList = await base44.entities.QuoteList.create({
+    const optimisticList = {
+      id: `temp-${Date.now()}`,
       name: formData.get("name"),
       project_id: formData.get("project_id"),
       notes: formData.get("notes"),
+      status: "draft",
+      created_date: new Date().toISOString()
+    };
+    setQuoteLists(prev => [optimisticList, ...prev]);
+    setShowNewList(false);
+    setSelectedList(optimisticList);
+    setItems([]);
+    const created = await base44.entities.QuoteList.create({
+      name: optimisticList.name,
+      project_id: optimisticList.project_id,
+      notes: optimisticList.notes,
       status: "draft"
     });
-    setShowNewList(false);
-    loadData();
-    handleSelectList(newList);
+    setQuoteLists(prev => prev.map(l => l.id === optimisticList.id ? created : l));
+    setSelectedList(created);
   };
 
   const handleAddItem = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    await base44.entities.QuoteItem.create({
+    const optimisticItem = {
+      id: `temp-${Date.now()}`,
       quote_list_id: selectedList.id,
       product_name: formData.get("product_name"),
       quantity: parseFloat(formData.get("quantity")),
       unit_price: parseFloat(formData.get("unit_price")),
       unit: formData.get("unit") || "each"
-    });
+    };
+    setItems(prev => [...prev, optimisticItem]);
     setShowNewItem(false);
-    loadItems(selectedList.id);
+    const created = await base44.entities.QuoteItem.create({
+      quote_list_id: optimisticItem.quote_list_id,
+      product_name: optimisticItem.product_name,
+      quantity: optimisticItem.quantity,
+      unit_price: optimisticItem.unit_price,
+      unit: optimisticItem.unit
+    });
+    setItems(prev => prev.map(i => i.id === optimisticItem.id ? created : i));
   };
 
   const handleDeleteItem = async (itemId) => {
+    setItems(prev => prev.filter(i => i.id !== itemId));
     await base44.entities.QuoteItem.delete(itemId);
-    loadItems(selectedList.id);
   };
 
   const calculateTotal = () => {
