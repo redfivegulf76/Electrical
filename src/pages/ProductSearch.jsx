@@ -48,8 +48,8 @@ export default function ProductSearch() {
   const [aiLoading, setAiLoading] = useState(false);
   const [searchSource, setSearchSource] = useState("catalog");
   const [generatedMaterialList, setGeneratedMaterialList] = useState(null);
-  const [agentConversation, setAgentConversation] = useState(null);
-  const [agentMessages, setAgentMessages] = useState([]);
+  const [aiResults, setAiResults] = useState([]);
+  const [aiSummary, setAiSummary] = useState("");
 
   useEffect(() => {
     loadData();
