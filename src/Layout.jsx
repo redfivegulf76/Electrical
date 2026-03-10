@@ -50,13 +50,15 @@ const navigationItems = [
     title: "Product Search",
     url: createPageUrl("ProductSearch"),
     icon: Search,
-    tierAccess: "all"
+    tierAccess: "all",
+    requiresProducts: true
   },
   {
     title: "Product Management",
     url: createPageUrl("ProductManagement"),
     icon: Package,
-    tierAccess: "all"
+    tierAccess: "all",
+    requiresProducts: true
   },
   {
     title: "Quote Lists",
