@@ -203,7 +203,13 @@ export default function AIEstimator() {
               <CardContent>
                 <div className="space-y-2">
                   {estimate.materials?.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white">
+                    <div key={index} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg bg-white">
+                      <div className="w-14 h-14 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                        ) : null}
+                        <ImageIcon className="w-6 h-6 text-slate-300" style={{ display: item.image_url ? 'none' : 'block' }} />
+                      </div>
                       <div className="flex-1">
                         <p className="font-semibold text-slate-900">{item.name}</p>
                         <p className="text-sm text-slate-600">
