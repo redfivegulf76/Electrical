@@ -376,8 +376,8 @@ export default function ProductSearch() {
                               {product.isAISuggestion && (
                                 <Badge className="bg-blue-600 text-white ml-2">AI Suggestion</Badge>
                               )}
-                              {product.model_number && (
-                                <p className="text-xs text-slate-500 font-mono mt-2">Part #: {product.model_number}</p>
+                              {(product.model_number || product.mpn) && (
+                                <p className="text-xs text-slate-500 font-mono mt-2">Part #: {product.model_number || product.mpn}</p>
                               )}
                             </div>
                           </div>
