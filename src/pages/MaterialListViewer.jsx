@@ -151,10 +151,12 @@ export default function MaterialListViewer() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <MobileHeader title={project?.project_name || "Material List"} backUrl={createPageUrl("Dashboard")} />
+      <div className="p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-start justify-between">
+        {/* Header - desktop only */}
+        <div className="hidden lg:flex items-start justify-between">
           <div>
             <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
               {project?.project_name}
@@ -382,6 +384,7 @@ export default function MaterialListViewer() {
             )}
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );
