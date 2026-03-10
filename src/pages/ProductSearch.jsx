@@ -393,11 +393,21 @@ export default function ProductSearch() {
                         {product.specifications && (
                           <p className="text-xs text-slate-500 line-clamp-2">{product.specifications}</p>
                         )}
-                        <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                            <Plus className="w-4 h-4 mr-1" />
-                            Add to Quote
-                          </Button>
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                          {product.price_range && (
+                            <span className="text-sm font-semibold text-slate-700">{product.price_range}</span>
+                          )}
+                          <div className="flex items-center gap-2 ml-auto">
+                            {product.buy_url && (
+                              <a href={product.buy_url} target="_blank" rel="noopener noreferrer">
+                                <Button size="sm" variant="outline" className="text-xs">Buy</Button>
+                              </a>
+                            )}
+                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                              <Plus className="w-4 h-4 mr-1" />
+                              Add to Quote
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
