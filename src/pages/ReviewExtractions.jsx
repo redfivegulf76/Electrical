@@ -156,10 +156,17 @@ export default function ReviewExtractions() {
     );
   }
 
+  const categorySelectOptions = categoryOptions.map(cat => ({
+    value: cat,
+    label: cat.replace(/_/g, ' ')
+  }));
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <MobileHeader title="Review Extractions" backUrl={createPageUrl("ExtractionDashboard")} />
+      <div className="p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="hidden lg:flex items-center justify-between">
           <div>
             <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
               Review Extracted Products
@@ -178,6 +185,16 @@ export default function ReviewExtractions() {
               Back
             </Button>
           </div>
+        </div>
+        {/* Mobile action bar */}
+        <div className="flex lg:hidden items-center justify-between pt-2">
+          <p className="text-sm text-slate-500">{job?.job_name}</p>
+          {pendingCount > 0 && (
+            <Button size="sm" onClick={handleApproveAll} className="bg-green-600 hover:bg-green-700">
+              <CheckCircle2 className="w-4 h-4 mr-1" />
+              Approve All ({pendingCount})
+            </Button>
+          )}
         </div>
 
         {products.length === 0 ? (
@@ -260,21 +277,12 @@ export default function ReviewExtractions() {
                       <div>
                         <Label>Category</Label>
                         {isEditing ? (
-                          <Select
+                          <MobileSelect
                             value={editForm.product_category || ""}
                             onValueChange={(value) => setEditForm({ ...editForm, product_category: value })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {categoryOptions.map(cat => (
-                                <SelectItem key={cat} value={cat}>
-                                  {cat.replace('_', ' ')}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            placeholder="Select category"
+                            options={categorySelectOptions}
+                          />
                         ) : (
                           <p className="font-medium">{product.product_category?.replace('_', ' ') || "N/A"}</p>
                         )}
@@ -367,6 +375,7 @@ export default function ReviewExtractions() {
             })}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
