@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Wand2, FileText, DollarSign } from "lucide-react";
+import { Sparkles, Wand2, FileText, DollarSign, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 import UpgradePrompt from "../components/shared/UpgradePrompt";
