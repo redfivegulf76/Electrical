@@ -67,7 +67,17 @@ export default function AIEstimator() {
       });
       
       await incrementSearch();
-      setEstimate(result);
+
+      // Recalculate totals with accurate math
+      const materials = (result.materials || []).map(item => ({
+        ...item,
+        total: item.quantity * item.unit_price
+      }));
+      const materials_total = materials.reduce((sum, item) => sum + item.total, 0);
+      const labor_total = result.labor_hours * result.labor_rate;
+      const total_estimate = materials_total + labor_total;
+
+      setEstimate({ ...result, materials, materials_total, labor_total, total_estimate });
     } catch (error) {
       console.error("Error generating estimate:", error);
     }
