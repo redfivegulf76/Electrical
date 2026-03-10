@@ -200,23 +200,19 @@ export default function ProductSearch() {
                   </>
                 )}
               </Button>
-              {agentMessages.length > 0 && (
-                <div className="mt-2 space-y-3 max-h-96 overflow-y-auto">
-                  {agentMessages.filter(m => m.role === "assistant" && m.content).map((msg, i) => (
-                    <div key={i} className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-slate-700 prose prose-sm max-w-none">
-                      <div className="flex items-center gap-2 mb-2 text-blue-700 font-semibold text-xs">
-                        <Bot className="w-3.5 h-3.5" />
-                        AI Agent Response
-                      </div>
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
-                  ))}
-                  {aiLoading && (
-                    <div className="flex items-center gap-2 text-sm text-slate-500 p-3">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Agent is searching your catalog...
-                    </div>
-                  )}
+              {aiLoading && (
+                <div className="flex items-center gap-2 text-sm text-slate-500 p-3">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Searching the internet for products...
+                </div>
+              )}
+              {aiSummary && !aiLoading && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-slate-700">
+                  <div className="flex items-center gap-2 mb-1 text-blue-700 font-semibold text-xs">
+                    <Bot className="w-3.5 h-3.5" />
+                    AI Summary
+                  </div>
+                  {aiSummary}
                 </div>
               )}
             </div>
