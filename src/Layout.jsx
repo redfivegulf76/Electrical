@@ -213,7 +213,7 @@ export default function Layout({ children, currentPageName }) {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {navigationItems.map((item) => {
-                    const hasAccess = canAccessFeature(item.tierAccess, item.adminOnly);
+                    const hasAccess = canAccessFeature(item.tierAccess, item.adminOnly, item.requiresProducts);
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton 
