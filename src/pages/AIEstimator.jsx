@@ -20,7 +20,7 @@ export default function AIEstimator() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await User.me();
+    const userData = await base44.auth.me();
     setUser(userData);
   };
 
