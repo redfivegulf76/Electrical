@@ -32,15 +32,13 @@ export default function AIEstimator() {
     if (!canSearch && isFreeUser) return;
     setLoading(true);
     try {
-      const result = await InvokeLLM({
-        prompt: `You are an expert electrical estimator. Based on this project description: "${description}"
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are an expert electrical estimator. Search the internet for current market pricing on electrical materials and labor rates. Based on this project description: "${description}"
         
-        Generate a detailed electrical estimate including:
-        1. A list of materials needed with quantities and estimated prices
-        2. Labor hours estimate
-        3. Total project cost estimate
-        
+        Generate a detailed electrical estimate using real current market prices for electrical materials from suppliers like Grainger, Graybar, Home Depot Pro, Rexel, or similar distributors.
+        Include real manufacturer part numbers where possible. Use current labor rates for licensed electricians in the US.
         Be realistic and comprehensive.`,
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
