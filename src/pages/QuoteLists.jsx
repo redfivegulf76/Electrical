@@ -183,9 +183,17 @@ export default function QuoteLists() {
                 </AnimatePresence>
 
                 {quoteLists.length === 0 && (
-                  <div className="text-center py-8">
-                    <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-sm text-slate-600">No quote lists yet</p>
+                  <div className="text-center py-12 px-4">
+                    <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">📋 Create Your First Quote</h3>
+                    <p className="text-sm text-slate-600 mb-6">Build and manage electrical project quotes here</p>
+                    <Button 
+                      onClick={() => setShowNewList(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Quote List
+                    </Button>
                   </div>
                 )}
               </CardContent>

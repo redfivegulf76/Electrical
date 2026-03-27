@@ -152,22 +152,37 @@ export default function AIEstimator() {
                   : `${searchesRemaining} of 20 free AI searches remaining this week`}
               </div>
             )}
-            <Textarea
-              placeholder="Describe the electrical project in detail... e.g., 'Install complete electrical system for a 2,000 sq ft commercial office including panels, circuits, lighting, outlets, and data cabling'"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={6}
-              className="text-base"
-            />
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-purple-900 mb-2">💡 Tips for Best Results:</h4>
+              <ul className="text-sm text-purple-800 space-y-1">
+                <li>✓ Include square footage and building type</li>
+                <li>✓ Mention specific requirements (panels, circuits, lighting type)</li>
+                <li>✓ Specify location/region for accurate labor rates</li>
+                <li>✓ Note any special conditions or challenges</li>
+              </ul>
+            </div>
+            <div className="relative">
+              <Textarea
+                placeholder="Describe the electrical project in detail... e.g., 'Install complete electrical system for a 2,000 sq ft commercial office including panels, circuits, lighting, outlets, and data cabling'"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={6}
+                className="text-base pr-12"
+              />
+              <div className="absolute bottom-3 right-3 text-xs text-slate-400 bg-white px-2 py-1 rounded">
+                {description.length} chars
+              </div>
+            </div>
             <Button
               onClick={handleGenerate}
               disabled={!description || loading || (!canSearch && isFreeUser)}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg text-white font-semibold"
+              title={!description ? "Please describe your project first" : "Generate AI estimate"}
             >
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                  Generating estimate...
+                  Generating estimate... (this may take 30-60 seconds)
                 </>
               ) : (
                 <>

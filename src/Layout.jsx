@@ -40,85 +40,103 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const navigationItems = [
+  // Core
   {
     title: "Dashboard",
     url: createPageUrl("Dashboard"),
     icon: LayoutDashboard,
-    tierAccess: "all"
+    tierAccess: "all",
+    group: "Core"
   },
+  // Estimating & Quotes
+  {
+    title: "AI Estimator",
+    url: createPageUrl("AIEstimator"),
+    icon: Sparkles,
+    tierAccess: ["Pro", "Enterprise"],
+    group: "Estimating"
+  },
+  {
+    title: "Quote Lists",
+    url: createPageUrl("QuoteLists"),
+    icon: FileText,
+    tierAccess: "all",
+    group: "Estimating"
+  },
+  {
+    title: "Templates & Kits",
+    url: createPageUrl("Templates"),
+    icon: Package,
+    tierAccess: ["Pro", "Enterprise"],
+    group: "Estimating"
+  },
+  // Products & Suppliers
   {
     title: "Product Search",
     url: createPageUrl("ProductSearch"),
     icon: Search,
     tierAccess: "all",
-    requiresProducts: true
+    requiresProducts: true,
+    group: "Products"
   },
   {
     title: "Product Management",
     url: createPageUrl("ProductManagement"),
     icon: Package,
     tierAccess: "all",
-    requiresProducts: true
-  },
-  {
-    title: "Quote Lists",
-    url: createPageUrl("QuoteLists"),
-    icon: FileText,
-    tierAccess: "all"
-  },
-  {
-    title: "AI Estimator",
-    url: createPageUrl("AIEstimator"),
-    icon: Sparkles,
-    tierAccess: ["Pro", "Enterprise"]
-  },
-  {
-    title: "Templates & Kits",
-    url: createPageUrl("Templates"),
-    icon: Package,
-    tierAccess: ["Pro", "Enterprise"]
+    requiresProducts: true,
+    group: "Products"
   },
   {
     title: "Supplier Directory",
     url: createPageUrl("SupplierDirectory"),
     icon: Building2,
-    tierAccess: ["Enterprise"]
+    tierAccess: ["Enterprise"],
+    group: "Products"
   },
   {
     title: "Electrician Directory",
     url: createPageUrl("ElectricianDirectory"),
     icon: Users,
-    tierAccess: "all"
+    tierAccess: "all",
+    group: "Products"
   },
+  // Admin
   {
     title: "AI Data Extractor",
     url: createPageUrl("DataExtractor"),
     icon: Bot,
-    adminOnly: true
+    adminOnly: true,
+    group: "Admin"
   },
   {
     title: "Extraction Dashboard",
     url: createPageUrl("ExtractionDashboard"),
     icon: Database,
-    adminOnly: true
+    adminOnly: true,
+    group: "Admin"
   },
   {
     title: "Manus AI Review",
     url: createPageUrl("ManusAdminDashboard"),
     icon: Bot,
-    adminOnly: true
+    adminOnly: true,
+    group: "Admin"
   },
+  // Settings
   {
     title: "Upgrade Plan",
     url: createPageUrl("PaymentPortal"),
     icon: CreditCard,
-    tierAccess: "all"
+    tierAccess: "all",
+    group: "Settings"
   },
   {
     title: "Profile Settings",
     url: createPageUrl("ProfileSettings"),
     icon: Settings,
-    tierAccess: "all"
+    tierAccess: "all",
+    group: "Settings"
   }
 ];
 
@@ -225,49 +243,57 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </SidebarHeader>
           
-          <SidebarContent className="p-3">
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-2 py-2 mb-1">
-                Navigation
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {navigationItems.map((item) => {
+          <SidebarContent className="p-3 space-y-2">
+            {['Core', 'Estimating', 'Products', 'Admin', 'Settings'].map((group) => {
+              const groupItems = navigationItems.filter(item => item.group === group);
+              const hasVisibleItems = groupItems.some(item => canAccessFeature(item.tierAccess, item.adminOnly, item.requiresProducts));
+              
+              if (!hasVisibleItems) return null;
+              
+              return (
+                <SidebarGroup key={group}>
+                  <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-2 py-2 mb-1">
+                    {group}
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {groupItems.map((item) => {
                     const hasAccess = canAccessFeature(item.tierAccess, item.adminOnly, item.requiresProducts);
                     return (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton 
-                          asChild={hasAccess}
-                          disabled={!hasAccess}
-                          className={`
-                            group relative rounded-lg mb-0.5 transition-all duration-150
-                            ${location.pathname === item.url 
-                              ? 'bg-blue-50 text-blue-700' 
-                              : hasAccess 
-                                ? 'hover:bg-slate-100 text-slate-600 hover:text-slate-900' 
-                                : 'opacity-40 cursor-not-allowed text-slate-400'
-                            }
-                          `}
-                        >
-                          {hasAccess ? (
-                            <Link to={item.url} className="flex items-center gap-3 px-3 py-2">
-                              <item.icon className={`w-4 h-4 ${location.pathname === item.url ? 'text-blue-600' : 'text-slate-400'}`} />
-                              <span className="font-medium text-sm">{item.title}</span>
-                            </Link>
-                          ) : (
-                            <div className="flex items-center gap-3 px-3 py-2">
-                              <item.icon className="w-4 h-4 text-slate-400" />
-                              <span className="font-medium text-sm">{item.title}</span>
-                              <Crown className="w-3 h-3 ml-auto text-slate-400" />
-                            </div>
-                          )}
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton 
+                            asChild={hasAccess}
+                            disabled={!hasAccess}
+                            className={`
+                              group relative rounded-lg mb-0.5 transition-all duration-150
+                              ${location.pathname === item.url 
+                                ? 'bg-blue-50 text-blue-700' 
+                                : hasAccess 
+                                  ? 'hover:bg-slate-100 text-slate-600 hover:text-slate-900' 
+                                  : 'opacity-40 cursor-not-allowed text-slate-400'
+                              }
+                            `}
+                          >
+                            {hasAccess ? (
+                              <Link to={item.url} className="flex items-center gap-3 px-3 py-2">
+                                <item.icon className={`w-4 h-4 ${location.pathname === item.url ? 'text-blue-600' : 'text-slate-400'}`} />
+                                <span className="font-medium text-sm">{item.title}</span>
+                              </Link>
+                            ) : (
+                              <div className="flex items-center gap-3 px-3 py-2">
+                                <item.icon className="w-4 h-4 text-slate-400" />
+                                <span className="font-medium text-sm">{item.title}</span>
+                                <Crown className="w-3 h-3 ml-auto text-slate-400" />
+                              </div>
+                            )}
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );                    )}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              );
+            })}
 
             {user && user.subscription_tier === "Free" && (
               <SidebarGroup className="mt-4">
