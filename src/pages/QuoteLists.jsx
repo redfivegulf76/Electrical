@@ -184,7 +184,13 @@ export default function QuoteLists() {
 
                 {quoteLists.length === 0 && (
                   <div className="text-center py-12 px-4">
-                    <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                    <div className="mb-6">
+                      <img 
+                        src="https://d2xsxph8kpxj0f.cloudfront.net/310519663482556260/EWcGRR7qmXf7LDYqcb4EN4/aipartsfinder-empty-state-quotes-M76fscbqRFDBhWVBw7bck2.webp"
+                        alt="No quotes"
+                        className="w-40 h-40 mx-auto object-contain"
+                      />
+                    </div>
                     <h3 className="text-lg font-semibold text-slate-900 mb-2">📋 Create Your First Quote</h3>
                     <p className="text-sm text-slate-600 mb-6">Build and manage electrical project quotes here</p>
                     <Button 

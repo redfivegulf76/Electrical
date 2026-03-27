@@ -327,7 +327,13 @@ export default function ProductSearch() {
             {filteredProducts.length === 0 ? (
               <Card className="border-2 border-dashed border-slate-200 bg-slate-50/50">
                 <CardContent className="p-12 text-center">
-                  <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <div className="mb-8">
+                    <img 
+                      src="https://d2xsxph8kpxj0f.cloudfront.net/310519663482556260/EWcGRR7qmXf7LDYqcb4EN4/aipartsfinder-empty-state-products-bkwCpzGAYYQ4QMRVujBxj4.webp"
+                      alt="No products"
+                      className="w-48 h-48 mx-auto object-contain"
+                    />
+                  </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
                     {allProducts.length === 0 ? "📦 Ready to Find Products?" : "No products match your search"}
                   </h3>

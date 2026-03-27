@@ -107,6 +107,16 @@ export default function Dashboard() {
         />
       )}
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Hero Section with Image */}
+        <div className="relative rounded-2xl overflow-hidden shadow-lg mb-8">
+          <img 
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663482556260/EWcGRR7qmXf7LDYqcb4EN4/aipartsfinder-hero-dashboard-Y9rvGPRYidKf4F4nrZKnpE.webp"
+            alt="Dashboard Hero"
+            className="w-full h-64 lg:h-80 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-transparent"></div>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="flex items-center gap-4">
