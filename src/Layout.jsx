@@ -288,7 +288,8 @@ export default function Layout({ children, currentPageName }) {
                             )}
                           </SidebarMenuButton>
                         </SidebarMenuItem>
-                      );                    )}
+                      );
+                    })}
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </SidebarGroup>
