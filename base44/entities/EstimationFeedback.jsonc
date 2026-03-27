@@ -1,0 +1,66 @@
+{
+  "name": "EstimationFeedback",
+  "type": "object",
+  "properties": {
+    "manus_job_id": {
+      "type": "string",
+      "description": "Manus job ID for traceability"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Related Project entity ID"
+    },
+    "feedback_type": {
+      "type": "string",
+      "enum": [
+        "labor_optimization",
+        "material_adjustment",
+        "formula_update",
+        "multiplier_suggestion"
+      ],
+      "description": "Type of estimation feedback"
+    },
+    "analysis_summary": {
+      "type": "string",
+      "description": "Manus analysis narrative"
+    },
+    "suggested_improvements": {
+      "type": "string",
+      "description": "Human-readable recommendations"
+    },
+    "recommendation_data": {
+      "type": "object",
+      "description": "Structured recommendation payload"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "Manus confidence 0-100"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending_review"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Admin review notes"
+    }
+  },
+  "required": [
+    "manus_job_id",
+    "feedback_type",
+    "analysis_summary"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

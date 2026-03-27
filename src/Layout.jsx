@@ -103,6 +103,12 @@ const navigationItems = [
     adminOnly: true
   },
   {
+    title: "Manus AI Review",
+    url: createPageUrl("ManusAdminDashboard"),
+    icon: Bot,
+    adminOnly: true
+  },
+  {
     title: "Upgrade Plan",
     url: createPageUrl("PaymentPortal"),
     icon: CreditCard,

@@ -1,0 +1,81 @@
+{
+  "name": "RawPricingUpdate",
+  "type": "object",
+  "properties": {
+    "manus_job_id": {
+      "type": "string",
+      "description": "Manus job ID for traceability"
+    },
+    "product_identifier": {
+      "type": "string",
+      "description": "MPN or CoreProduct ID"
+    },
+    "supplier_name": {
+      "type": "string",
+      "description": "Supplier name"
+    },
+    "new_price": {
+      "type": "number",
+      "description": "Updated price from Manus"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "availability_status": {
+      "type": "string",
+      "enum": [
+        "in_stock",
+        "low_stock",
+        "out_of_stock",
+        "special_order"
+      ],
+      "description": "Availability reported by Manus"
+    },
+    "last_checked_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When Manus last checked this price"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "Manus confidence score 0-100"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected",
+        "flagged_change"
+      ],
+      "default": "pending_review"
+    },
+    "flag_reason": {
+      "type": "string",
+      "description": "Reason for flagging, e.g. major_price_change"
+    },
+    "raw_data": {
+      "type": "object",
+      "description": "Original Manus JSON payload"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Admin notes"
+    }
+  },
+  "required": [
+    "manus_job_id",
+    "product_identifier",
+    "supplier_name",
+    "new_price"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

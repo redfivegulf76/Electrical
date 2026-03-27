@@ -1,0 +1,74 @@
+{
+  "name": "SupplierOptimizationSuggestion",
+  "type": "object",
+  "properties": {
+    "manus_job_id": {
+      "type": "string",
+      "description": "Manus job ID for traceability"
+    },
+    "product_identifier": {
+      "type": "string",
+      "description": "MPN or CoreProduct ID"
+    },
+    "current_supplier": {
+      "type": "string",
+      "description": "Current supplier being used"
+    },
+    "suggested_supplier": {
+      "type": "string",
+      "description": "Manus recommended supplier"
+    },
+    "current_price": {
+      "type": "number",
+      "description": "Current supplier price"
+    },
+    "suggested_price": {
+      "type": "number",
+      "description": "Suggested supplier price"
+    },
+    "estimated_savings_percentage": {
+      "type": "number",
+      "description": "Estimated % savings"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "lower_price",
+        "better_availability",
+        "faster_lead_time",
+        "higher_reliability"
+      ],
+      "description": "Primary reason for suggestion"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "Manus confidence 0-100"
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending_review"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Admin review notes"
+    }
+  },
+  "required": [
+    "manus_job_id",
+    "product_identifier",
+    "suggested_supplier"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
