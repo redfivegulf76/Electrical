@@ -329,18 +329,47 @@ export default function ProductSearch() {
                 <CardContent className="p-12 text-center">
                   <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
-                    {allProducts.length === 0 ? "No products in database" : "No products match your search"}
+                    {allProducts.length === 0 ? "📦 Ready to Find Products?" : "No products match your search"}
                   </h3>
-                  <p className="text-slate-600 mb-4">
+                  <p className="text-slate-600 mb-6">
                     {allProducts.length === 0
-                      ? "Start by using AI search to find products, or add products manually via Product Management"
+                      ? "Your product database is empty. Get started in 3 ways:"
                       : "Try adjusting your search terms or category filter"}
                   </p>
                   {allProducts.length === 0 && (
-                    <p className="text-sm text-blue-600">
-                      💡 Tip: Use the AI-Powered Search above to find products in your catalog or get AI suggestions
-                    </p>
+                    <div className="space-y-4 max-w-md mx-auto">
+                      <div className="bg-white p-4 rounded-lg border border-slate-200 text-left">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                          <div>
+                            <h4 className="font-semibold text-slate-900 mb-1">Use AI Search</h4>
+                            <p className="text-sm text-slate-600">Describe what you need (e.g., "200A panel for office") and AI finds products</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg border border-slate-200 text-left">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                          <div>
+                            <h4 className="font-semibold text-slate-900 mb-1">Add Products Manually</h4>
+                            <p className="text-sm text-slate-600">Go to Product Management to add products one by one</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg border border-slate-200 text-left">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                          <div>
+                            <h4 className="font-semibold text-slate-900 mb-1">Extract from Suppliers</h4>
+                            <p className="text-sm text-slate-600">Use AI Data Extractor to auto-import 100+ products from catalogs</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
+                  <p className="text-xs text-slate-500 mt-6">
+                    💡 Tip: Most users start with the Data Extractor for fastest results
+                  </p>
                 </CardContent>
               </Card>
             ) : (

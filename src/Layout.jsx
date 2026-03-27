@@ -152,13 +152,20 @@ export default function Layout({ children, currentPageName }) {
       // Check onboarding status
       const records = await base44.entities.UserOnboardingStatus.filter({ user_id: userData.email });
       if (records.length === 0) {
-        // First-time user
-        setShowOnboarding(true);
+        // First-time user - check if user dismissed onboarding
+        const dismissedOnboarding = localStorage.getItem(`onboarding_dismissed_${userData.email}`);
+        if (!dismissedOnboarding) {
+          setShowOnboarding(true);
+        }
       } else {
         const record = records[0];
         setOnboardingRecord(record);
         if (!record.onboarding_completed) {
-          setShowOnboarding(true);
+          // Check if user dismissed it
+          const dismissedOnboarding = localStorage.getItem(`onboarding_dismissed_${userData.email}`);
+          if (!dismissedOnboarding) {
+            setShowOnboarding(true);
+          }
         }
       }
     } catch (error) {
@@ -170,6 +177,13 @@ export default function Layout({ children, currentPageName }) {
 
   const handleLogout = async () => {
     await base44.auth.logout();
+  };
+
+  const handleOnboardingDismiss = () => {
+    if (user) {
+      localStorage.setItem(`onboarding_dismissed_${user.email}`, 'true');
+    }
+    setShowOnboarding(false);
   };
 
   const canAccessFeature = (tierAccess, adminOnly, requiresProducts) => {
@@ -335,6 +349,7 @@ export default function Layout({ children, currentPageName }) {
           user={user}
           onboardingRecord={onboardingRecord}
           onComplete={() => setShowOnboarding(false)}
+          onDismiss={handleOnboardingDismiss}
         />
       )}
     </SidebarProvider>

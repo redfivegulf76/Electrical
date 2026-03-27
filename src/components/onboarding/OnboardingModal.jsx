@@ -12,7 +12,7 @@ import StepDemoEstimate from "./StepDemoEstimate";
 
 const TOTAL_STEPS = 5; // welcome, role, company, tour, demo
 
-export default function OnboardingModal({ user, onboardingRecord, onComplete }) {
+export default function OnboardingModal({ user, onboardingRecord, onComplete, onDismiss }) {
   const [step, setStep] = useState(0);
   const [roleType, setRoleType] = useState(null);
   const [companyData, setCompanyData] = useState({});
@@ -46,7 +46,10 @@ export default function OnboardingModal({ user, onboardingRecord, onComplete }) 
     onComplete();
   };
 
-  const handleSkip = () => saveAndClose(true);
+  const handleSkip = () => {
+    if (onDismiss) onDismiss();
+    saveAndClose(true);
+  };
 
   const stepLabels = ["Welcome", "Your Role", "Company", "Features", "Demo"];
 
@@ -87,6 +90,7 @@ export default function OnboardingModal({ user, onboardingRecord, onComplete }) 
               variant="ghost"
               size="icon"
               onClick={handleSkip}
+              title="Don't show this again"
               className="text-slate-400 hover:text-slate-700 h-8 w-8"
             >
               <X className="w-4 h-4" />
