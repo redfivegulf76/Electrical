@@ -86,11 +86,10 @@ export default function ProductSearch() {
     const result = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an expert electrical supply product researcher. Search the internet and find real electrical products that match this request: "${aiQuery}". 
       
-      Find 6-10 real products from actual manufacturers like Eaton, Square D, Leviton, Hubbell, Southwire, Lutron, Legrand, Siemens, ABB, etc.
-      Return accurate product names, real manufacturer part numbers (MPNs), and detailed specifications.
-      For image_url, use real product image URLs from manufacturer websites or distributor sites like Grainger, Graybar, Rexel if you can find them, otherwise leave blank.
-      For buy_url, provide a real URL where this product can be purchased (e.g. Grainger, Home Depot Pro, Graybar, Amazon Business).
-      Also provide a brief summary of your findings in the summary field.`,
+      Find 5-6 real products from actual manufacturers like Eaton, Square D, Leviton, Hubbell, Southwire, Lutron, Legrand, Siemens, ABB, etc.
+      Return accurate product names, real manufacturer part numbers (MPNs), and brief descriptions (under 100 chars each).
+      For buy_url, provide a real URL where this product can be purchased (e.g. Grainger, Home Depot Pro, Graybar).
+      Keep all string values short and concise. Summary should be under 200 characters.`,
       add_context_from_internet: true,
       response_json_schema: {
         type: "object",
@@ -104,10 +103,8 @@ export default function ProductSearch() {
                 name: { type: "string" },
                 manufacturer: { type: "string" },
                 model_number: { type: "string" },
-                category: { type: "string", enum: ["wire_cable","conduit","boxes","switches_outlets","lighting","panels","breakers","disconnects","transformers","motors","safety","tools","other"] },
+                category: { type: "string", enum: ["wire_cable","conduit","boxes","switches_outlets","lighting","panels","breakers","safety","tools","other"] },
                 description: { type: "string" },
-                specifications: { type: "string" },
-                image_url: { type: "string" },
                 buy_url: { type: "string" },
                 price_range: { type: "string" }
               }
